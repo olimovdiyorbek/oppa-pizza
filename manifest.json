@@ -1,7 +1,8 @@
 {
   "name": "Oppa Pizza Official",
   "short_name": "Oppa Pizza",
-  "start_url": "/index.html",
+  "description": "Eng mazali pitsalar va taomlar buyurtmasi",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#006747",
@@ -10,12 +11,13 @@
       "src": "assets/icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "assets/icons/icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     }
   ]
 }
