@@ -211,7 +211,7 @@ async function finishOrder() {
         });
 
         if (response.ok) {
-            alert("Rahmat! Buyurtmangiz Diyorbekka (sizga) yuborildi. ✅");
+            alert("Rahmat! Buyurtmangiz Telegram orqali qabul qilindi. ✅");
             cart = [];
             syncStorage();
             closeCart();
@@ -223,4 +223,5 @@ async function finishOrder() {
         alert("Internet aloqasini tekshiring!");
     }
 }
+
 
