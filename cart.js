@@ -1,44 +1,44 @@
 // 1. MAHSULOTLAR BAZASI
 const products = [
     // Pitsalar
-    { id: 1, category: 'pizza', name: 'Oppa Pizza', price: 75000, img: 'pizza1.jpg' },
-    { id: 2, category: 'pizza', name: 'Margarita', price: 60000, img: 'pizza2.jpg' },
-    { id: 3, category: 'pizza', name: 'Pepperoni', price: 70000, img: 'pizza3.jpg' },
-    { id: 4, category: 'pizza', name: 'Go\'shtli', price: 85000, img: 'pizza4.jpg' },
-    { id: 5, category: 'pizza', name: 'Qo\'ziqorinli', price: 65000, img: 'pizza5.jpg' },
-    { id: 6, category: 'pizza', name: 'Meksika', price: 72000, img: 'pizza6.jpg' },
-    { id: 7, category: 'pizza', name: 'Tovuqli', price: 68000, img: 'pizza7.jpg' },
-    { id: 8, category: 'pizza', name: 'Assorti', price: 90000, img: 'pizza8.jpg' },
+    { id: 1, category: 'pizza', name: 'Margarita pitsa', price: 75000, img: 'pizza1.jpg' },
+    { id: 2, category: 'pizza', name: 'Margarita pitsa-2', price: 60000, img: 'pizza2.jpg' },
+    { id: 3, category: 'pizza', name: 'Pitsa Regina', price: 70000, img: 'pizza3.jpg' },
+    { id: 4, category: 'pizza', name: 'Pomidorli pitsa', price: 85000, img: 'pizza4.jpg' },
+    { id: 5, category: 'pizza', name: 'Qo\'ziqorinli pitsa', price: 65000, img: 'pizza5.jpg' },
+    { id: 6, category: 'pizza', name: 'Pomidorli pitsa-2', price: 72000, img: 'pizza6.jpg' },
+    { id: 7, category: 'pizza', name: 'Tovuqli pitsa', price: 68000, img: 'pizza7.jpg' },
+    { id: 8, category: 'pizza', name: 'Qalbasali pitsa', price: 90000, img: 'pizza8.jpg' },
 
     // Taomlar
-    { id: 9, category: 'food', name: 'Klab Sendvich', price: 35000, img: 'food1.jpg' },
-    { id: 10, category: 'food', name: 'Fri kartoshkasi', price: 15000, img: 'food2.jpg' },
-    { id: 11, category: 'food', name: 'Burger', price: 30000, img: 'food3.jpg' },
-    { id: 12, category: 'food', name: 'Hot-dog', price: 18000, img: 'food4.jpg' },
-    { id: 13, category: 'food', name: 'Naggetslar', price: 25000, img: 'food5.jpg' },
-    { id: 14, category: 'food', name: 'Sezar Salat', price: 28000, img: 'food6.jpg' },
-    { id: 15, category: 'food', name: 'Lavash', price: 26000, img: 'food7.jpg' },
-    { id: 16, category: 'food', name: 'Steyk', price: 55000, img: 'food8.jpg' },
+    { id: 9, category: 'food', name: 'Burger', price: 35000, img: 'food-1.jpg' },
+    { id: 10, category: 'food', name: 'Lavash', price: 25000, img: 'food-2.jpg' },
+    { id: 11, category: 'food', name: 'Non kabob', price: 17000, img: 'food-3.jpg' },
+    { id: 12, category: 'food', name: 'Free', price: 12000, img: 'food-4.jpg' },
+    { id: 13, category: 'food', name: 'Osh', price: 70000, img: 'food-5.jpg' },
+    { id: 14, category: 'food', name: 'Go\'sht shashlik', price: 20000, img: 'food-6.jpg' },
+    { id: 15, category: 'food', name: 'Ijjon shashlik', price: 12000, img: 'food-7.jpg' },
+    { id: 16, category: 'food', name: 'Hod-dog', price: 15000, img: 'food-8.jpg' },
 
     // Desertlar
-    { id: 17, category: 'dessert', name: 'Chizkeyk', price: 25000, img: 'dessert1.jpg' },
-    { id: 18, category: 'dessert', name: 'Tiramisu', price: 30000, img: 'dessert2.jpg' },
-    { id: 19, category: 'dessert', name: 'Muzqaymoq', price: 12000, img: 'dessert3.jpg' },
-    { id: 20, category: 'dessert', name: 'Brauni', price: 22000, img: 'dessert4.jpg' },
-    { id: 21, category: 'dessert', name: 'Pahlava', price: 15000, img: 'dessert5.jpg' },
-    { id: 22, category: 'dessert', name: 'Meva assorti', price: 40000, img: 'dessert6.jpg' },
-    { id: 23, category: 'dessert', name: 'Donut', price: 10000, img: 'dessert7.jpg' },
-    { id: 24, category: 'dessert', name: 'Vafli', price: 20000, img: 'dessert8.jpg' },
+    { id: 17, category: 'dessert', name: 'CHizli desert', price: 57000, img: 'dessert-1.jpg' },
+    { id: 18, category: 'dessert', name: 'San sebastian', price: 70000, img: 'dessert-2.jpg' },
+    { id: 19, category: 'dessert', name: 'Karamelli muzqaymoqli desert', price: 70000, img: 'dessert-3.jpg' },
+    { id: 20, category: 'dessert', name: 'San sebastian-2', price: 70000, img: 'dessert-4.jpg' },
+    { id: 21, category: 'dessert', name: 'Qulupnayli Bingsu', price: 77000, img: 'dessert-5.jpg' },
+    { id: 22, category: 'dessert', name: 'Tiramisu', price: 60000, img: 'dessert-6.jpg' },
+    { id: 23, category: 'dessert', name: 'shokoladli cupcake', price: 23000, img: 'dessert-7.jpg' },
+    { id: 24, category: 'dessert', name: 'Belgiya vaflisi', price: 20000, img: 'dessert-8.jpg' },
 
     // Ichimliklar
-    { id: 25, category: 'drinks', name: 'Coca-Cola 1.5L', price: 12000, img: 'drink1.jpg' },
-    { id: 26, category: 'drinks', name: 'Fanta 1.5L', price: 12000, img: 'drink2.jpg' },
-    { id: 27, category: 'drinks', name: 'Sprite 1.5L', price: 12000, img: 'drink3.jpg' },
-    { id: 28, category: 'drinks', name: 'Olma sharbati', price: 15000, img: 'drink4.jpg' },
-    { id: 29, category: 'drinks', name: 'Qora choy', price: 5000, img: 'drink5.jpg' },
-    { id: 30, category: 'drinks', name: 'Kofe Latte', price: 18000, img: 'drink6.jpg' },
-    { id: 31, category: 'drinks', name: 'Mineral suv', price: 4000, img: 'drink7.jpg' },
-    { id: 32, category: 'drinks', name: 'Limonad', price: 20000, img: 'drink8.jpg' }
+    { id: 25, category: 'drinks', name: 'Mohitto 0.5L', price: 12000, img: 'drink-1.jpg' },
+    { id: 26, category: 'drinks', name: 'Coca-cola 0.5L', price: 12000, img: 'drink-2.jpg' },
+    { id: 27, category: 'drinks', name: 'Pepsi 0.5L', price: 12000, img: 'drink-3.jpg' },
+    { id: 28, category: 'drinks', name: 'Fanta o.5L', price: 15000, img: 'drink-4.jpg' },
+    { id: 29, category: 'drinks', name: 'Srite 0.5L', price: 5000, img: 'drink-5.jpg' },
+    { id: 30, category: 'drinks', name: 'Adrinalin 0.5L', price: 18000, img: 'drink-6.jpg' },
+    { id: 31, category: 'drinks', name: 'Read bull 0.5L', price: 4000, img: 'drink-7.jpg' },
+    { id: 32, category: 'drinks', name: 'Dinay 0.5L', price: 20000, img: 'drink-8.jpg' }
 ];
 
 // 2. HOLATNI BOSHQARISH (LocalStorage bilan)
