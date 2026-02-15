@@ -162,10 +162,13 @@ function closeCart() {
     document.getElementById('cart-modal').style.display = "none";
 }
 
-// 5. TELEGRAM INTEGRATSIYASI (YANGILANGAN)
+// 5. TELEGRAM INTEGRATSIYASI (SIZ UCHUN TO'G'RILANGAN)
 async function finishOrder() {
+    // 1. TOKEN O'ZGARMAYDI
     const BOT_TOKEN = "8539044860:AAF_MNwdQrHUjLsu_aIYnjk8kBmX40-X9aM"; 
-    const CHAT_ID = " 6231029845"; 
+    
+    // 2. DIQQAT: Mana bu yerga sizning shaxsiy ID raqamingizni qo'ydim!
+    const CHAT_ID = "6231029845"; 
 
     const nameInput = document.getElementById('user-name');
     const phoneInput = document.getElementById('user-phone');
@@ -181,10 +184,6 @@ async function finishOrder() {
     const address = addressInput.value;
     const payMethodEl = document.querySelector('input[name="pay"]:checked');
     const payMethod = payMethodEl ? payMethodEl.value : "Naqd";
-
-    localStorage.setItem('user_name', name);
-    localStorage.setItem('user_phone', phone);
-    localStorage.setItem('user_address', address);
 
     let orderDetails = cart.map((item, i) => `${i+1}. *${item.name}* — ${item.quantity} dona`).join('\n');
     let totalSum = cart.reduce((s, item) => s + (item.price * item.quantity), 0);
@@ -212,16 +211,15 @@ async function finishOrder() {
         });
 
         if (response.ok) {
-            alert("Rahmat! Buyurtmangiz botga yuborildi. ✅");
+            alert("Rahmat! Buyurtmangiz Diyorbekka (sizga) yuborildi. ✅");
             cart = [];
             syncStorage();
             closeCart();
             renderCart();
         } else {
-            alert("Xatolik: Bot sizga xabar yubora olmayapti. Botga kirib /start tugmasini bosganmisiz?");
+            alert("Xatolik! Iltimos, @oppa_pizza_bot ga kirib 'Start' tugmasini bosganingizni yana bir bor tekshiring.");
         }
     } catch (error) {
         alert("Internet aloqasini tekshiring!");
     }
 }
-
