@@ -41,12 +41,10 @@ const products = [
     { id: 32, category: 'drinks', name: 'Dinay 0.5L', price: 20000, img: 'drink-8.jpg' }
 ];
 
-// 2. HOLATNI BOSHQARISH (LocalStorage bilan)
+// 2. HOLATNI BOSHQARISH
 let cart = JSON.parse(localStorage.getItem('oppa_cart')) || [];
 
-// Sahifa yuklanganda ishlidigan qism
 window.onload = () => {
-    // Avvalgi foydalanuvchi ma'lumotlarini tiklash
     if(localStorage.getItem('user_name')) document.getElementById('user-name').value = localStorage.getItem('user_name');
     if(localStorage.getItem('user_phone')) document.getElementById('user-phone').value = localStorage.getItem('user_phone');
     if(localStorage.getItem('user_address')) {
@@ -123,11 +121,7 @@ function renderCart() {
     let totalSum = 0;
 
     if (cart.length === 0) {
-        list.innerHTML = `
-            <div style="text-align:center; padding: 40px 0;">
-                <p style="font-size: 50px;">🛒</p>
-                <p style="color: #888;">Savat hozircha bo'sh</p>
-            </div>`;
+        list.innerHTML = `<div style="text-align:center; padding: 40px 0;"><p style="font-size: 50px;">🛒</p><p style="color: #888;">Savat hozircha bo'sh</p></div>`;
         totalEl.innerText = "0 so'm";
         return;
     }
@@ -146,9 +140,7 @@ function renderCart() {
                     <span>${item.quantity}</span>
                     <button onclick="changeQty(${item.id}, 1)">+</button>
                 </div>
-                <div class="item-total-price">
-                    ${itemTotal.toLocaleString()} so'm
-                </div>
+                <div class="item-total-price">${itemTotal.toLocaleString()} so'm</div>
             </div>`;
     });
     
@@ -159,9 +151,7 @@ function changeQty(id, delta) {
     const item = cart.find(p => p.id === id);
     if (item) {
         item.quantity += delta;
-        if (item.quantity <= 0) {
-            cart = cart.filter(p => p.id !== id);
-        }
+        if (item.quantity <= 0) cart = cart.filter(p => p.id !== id);
     }
     syncStorage();
     renderCart();
@@ -171,41 +161,41 @@ function closeCart() {
     document.getElementById('cart-modal').style.display = "none";
 }
 
-// 5. TELEGRAM INTEGRATSIYASI VA BUYURTMA
+// 5. TELEGRAM INTEGRATSIYASI (YANGILANGAN)
 async function finishOrder() {
-    const BOT_TOKEN = "7547192306:AAH5mI5V6qO-mIeU8_pXoHj6j5-9v5w5y5E"; // O'zingizning Tokeningizni qo'ying
-    const CHAT_ID = "123456789"; // O'zingizning ID'ingizni qo'ying
+    // SIZNING MA'LUMOTLARINGIZ
+    const BOT_TOKEN = "8539044860:AAF_MNwdQrHUjLsu_aIYnjk8kBmX40-X9aM"; 
+    const CHAT_ID = "8539044860"; 
 
     const name = document.getElementById('user-name').value;
     const phone = document.getElementById('user-phone').value;
     const address = document.getElementById('user-address').value;
-    const payMethod = document.querySelector('input[name="pay"]:checked').value;
+    
+    // To'lov usulini olishda xatolik bo'lmasligi uchun tekshiruv
+    const payMethodEl = document.querySelector('input[name="pay"]:checked');
+    const payMethod = payMethodEl ? payMethodEl.value : "Aniqlanmagan";
 
     if (cart.length === 0) return alert("Savat bo'sh!");
     if (!name || !phone || !address) return alert("Iltimos, barcha ma'lumotlarni to'ldiring!");
 
-    // Ma'lumotlarni saqlab qolish
+    // Ma'lumotlarni saqlash
     localStorage.setItem('user_name', name);
     localStorage.setItem('user_phone', phone);
     localStorage.setItem('user_address', address);
-    document.getElementById('display-address').innerText = address;
 
-    let orderDetails = cart.map((item, i) => `${i+1}. ${item.name} (${item.quantity} dona)`).join('\n');
+    let orderDetails = cart.map((item, i) => `${i+1}. *${item.name}* — ${item.quantity} dona`).join('\n');
     let totalSum = cart.reduce((s, item) => s + (item.price * item.quantity), 0);
 
-    const message = `
-🚀 *YANGI BUYURTMA!*
-━━━━━━━━━━━━━━
-👤 *Mijoz:* ${name}
-📞 *Tel:* ${phone}
-📍 *Manzil:* ${address}
-💳 *To'lov:* ${payMethod === 'Cash' ? 'Naqd' : 'Karta'}
-━━━━━━━━━━━━━━
-📦 *Mahsulotlar:*
-${orderDetails}
-━━━━━━━━━━━━━━
-💰 *JAMI:* ${totalSum.toLocaleString()} so'm
-    `;
+    const message = `🚀 *YANGI BUYURTMA!*\n` +
+                  `━━━━━━━━━━━━━━\n` +
+                  `👤 *Mijoz:* ${name}\n` +
+                  `📞 *Tel:* ${phone}\n` +
+                  `📍 *Manzil:* ${address}\n` +
+                  `💳 *To'lov:* ${payMethod === 'Cash' ? 'Naqd' : 'Karta'}\n` +
+                  `━━━━━━━━━━━━━━\n` +
+                  `📦 *Mahsulotlar:*\n${orderDetails}\n` +
+                  `━━━━━━━━━━━━━━\n` +
+                  `💰 *JAMI:* ${totalSum.toLocaleString()} so'm`;
 
     try {
         const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
@@ -219,12 +209,12 @@ ${orderDetails}
         });
 
         if (response.ok) {
-            alert("Rahmat! Buyurtmangiz qabul qilindi.");
+            alert("Rahmat! Buyurtmangiz botga yuborildi. ✅");
             cart = [];
             syncStorage();
             closeCart();
         } else {
-            alert("Xatolik! Bot sozlamalarini tekshiring.");
+            alert("Xatolik yuz berdi! Iltimos, botni ishga tushirganingizni tekshiring.");
         }
     } catch (error) {
         alert("Internet aloqasini tekshiring!");
