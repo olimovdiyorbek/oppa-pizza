@@ -165,7 +165,7 @@ function closeCart() {
 // 5. TELEGRAM INTEGRATSIYASI (YANGILANGAN)
 async function finishOrder() {
     const BOT_TOKEN = "8539044860:AAF_MNwdQrHUjLsu_aIYnjk8kBmX40-X9aM"; 
-    const CHAT_ID = "8539044860"; 
+    const CHAT_ID = " 6231029845"; 
 
     const nameInput = document.getElementById('user-name');
     const phoneInput = document.getElementById('user-phone');
@@ -224,3 +224,4 @@ async function finishOrder() {
         alert("Internet aloqasini tekshiring!");
     }
 }
+
