@@ -11,34 +11,34 @@ const products = [
     { id: 8, category: 'pizza', name: 'Qalbasali pitsa', price: 90000, img: 'pizza8.jpg' },
 
     // Taomlar
-    { id: 9, category: 'food', name: 'Burger', price: 35000, img: 'food1.jpg' },
-    { id: 10, category: 'food', name: 'Lavash', price: 25000, img: 'food2.jpg' },
-    { id: 11, category: 'food', name: 'Non kabob', price: 17000, img: 'food3.jpg' },
-    { id: 12, category: 'food', name: 'Free', price: 12000, img: 'food4.jpg' },
-    { id: 13, category: 'food', name: 'Osh', price: 70000, img: 'food5.jpg' },
-    { id: 14, category: 'food', name: 'Go\'sht shashlik', price: 20000, img: 'food6.jpg' },
-    { id: 15, category: 'food', name: 'Ijjon shashlik', price: 12000, img: 'food7.jpg' },
-    { id: 16, category: 'food', name: 'Hod-dog', price: 15000, img: 'food8.jpg' },
+    { id: 9, category: 'food', name: 'Burger', price: 35000, img: 'food-1.jpg' },
+    { id: 10, category: 'food', name: 'Lavash', price: 25000, img: 'food-2.jpg' },
+    { id: 11, category: 'food', name: 'Non kabob', price: 17000, img: 'food-3.jpg' },
+    { id: 12, category: 'food', name: 'Free', price: 12000, img: 'food-4.jpg' },
+    { id: 13, category: 'food', name: 'Osh', price: 70000, img: 'food-5.jpg' },
+    { id: 14, category: 'food', name: 'Go\'sht shashlik', price: 20000, img: 'food-6.jpg' },
+    { id: 15, category: 'food', name: 'Ijjon shashlik', price: 12000, img: 'food-7.jpg' },
+    { id: 16, category: 'food', name: 'Hod-dog', price: 15000, img: 'food-8.jpg' },
 
     // Desertlar
-    { id: 17, category: 'dessert', name: 'CHizli desert', price: 57000, img: 'dessert1.jpg' },
-    { id: 18, category: 'dessert', name: 'San sebastian', price: 70000, img: 'dessert2.jpg' },
-    { id: 19, category: 'dessert', name: 'Karamelli muzqaymoqli desert', price: 70000, img: 'dessert3.jpg' },
-    { id: 20, category: 'dessert', name: 'San sebastian-2', price: 70000, img: 'dessert4.jpg' },
-    { id: 21, category: 'dessert', name: 'Qulupnayli Bingsu', price: 77000, img: 'dessert5.jpg' },
-    { id: 22, category: 'dessert', name: 'Tiramisu', price: 60000, img: 'dessert6.jpg' },
-    { id: 23, category: 'dessert', name: 'shokoladli cupcake', price: 23000, img: 'dessert7.jpg' },
-    { id: 24, category: 'dessert', name: 'Belgiya vaflisi', price: 20000, img: 'dessert8.jpg' },
+    { id: 17, category: 'dessert', name: 'CHizli desert', price: 57000, img: 'dessert-1.jpg' },
+    { id: 18, category: 'dessert', name: 'San sebastian', price: 70000, img: 'dessert-2.jpg' },
+    { id: 19, category: 'dessert', name: 'Karamelli muzqaymoqli desert', price: 70000, img: 'dessert-3.jpg' },
+    { id: 20, category: 'dessert', name: 'San sebastian-2', price: 70000, img: 'dessert-4.jpg' },
+    { id: 21, category: 'dessert', name: 'Qulupnayli Bingsu', price: 77000, img: 'dessert-5.jpg' },
+    { id: 22, category: 'dessert', name: 'Tiramisu', price: 60000, img: 'dessert-6.jpg' },
+    { id: 23, category: 'dessert', name: 'shokoladli cupcake', price: 23000, img: 'dessert-7.jpg' },
+    { id: 24, category: 'dessert', name: 'Belgiya vaflisi', price: 20000, img: 'dessert-8.jpg' },
 
     // Ichimliklar
-    { id: 25, category: 'drinks', name: 'Mohitto 0.5L', price: 12000, img: 'drink1.jpg' },
-    { id: 26, category: 'drinks', name: 'Coca-cola 0.5L', price: 12000, img: 'drink2.jpg' },
-    { id: 27, category: 'drinks', name: 'Pepsi 0.5L', price: 12000, img: 'drink3.jpg' },
-    { id: 28, category: 'drinks', name: 'Fanta o.5L', price: 15000, img: 'drink4.jpg' },
-    { id: 29, category: 'drinks', name: 'Srite 0.5L', price: 5000, img: 'drink5.jpg' },
-    { id: 30, category: 'drinks', name: 'Adrinalin 0.5L', price: 18000, img: 'drink6.jpg' },
-    { id: 31, category: 'drinks', name: 'Read bull 0.5L', price: 4000, img: 'drink7.jpg' },
-    { id: 32, category: 'drinks', name: 'Dinay 0.5L', price: 20000, img: 'drink8.jpg' }
+    { id: 25, category: 'drinks', name: 'Mohitto 0.5L', price: 12000, img: 'drink-1.jpg' },
+    { id: 26, category: 'drinks', name: 'Coca-cola 0.5L', price: 12000, img: 'drink-2.jpg' },
+    { id: 27, category: 'drinks', name: 'Pepsi 0.5L', price: 12000, img: 'drink-3.jpg' },
+    { id: 28, category: 'drinks', name: 'Fanta o.5L', price: 15000, img: 'drink-4.jpg' },
+    { id: 29, category: 'drinks', name: 'Srite 0.5L', price: 5000, img: 'drink-5.jpg' },
+    { id: 30, category: 'drinks', name: 'Adrinalin 0.5L', price: 18000, img: 'drink-6.jpg' },
+    { id: 31, category: 'drinks', name: 'Read bull 0.5L', price: 4000, img: 'drink-7.jpg' },
+    { id: 32, category: 'drinks', name: 'Dinay 0.5L', price: 20000, img: 'drink-8.jpg' }
 ];
 
 // 2. HOLATNI BOSHQARISH
@@ -116,8 +116,9 @@ function openCart() {
 function renderCart() {
     const list = document.getElementById('cart-items-list');
     const totalEl = document.getElementById('cart-total-price');
-    list.innerHTML = "";
+    if(!list || !totalEl) return;
     
+    list.innerHTML = "";
     let totalSum = 0;
 
     if (cart.length === 0) {
@@ -161,23 +162,26 @@ function closeCart() {
     document.getElementById('cart-modal').style.display = "none";
 }
 
-// 5. TELEGRAM INTEGRATSIYASI
+// 5. TELEGRAM INTEGRATSIYASI (YANGILANGAN)
 async function finishOrder() {
-    // SIZNING BOT MA'LUMOTLARINGIZ
     const BOT_TOKEN = "8539044860:AAF_MNwdQrHUjLsu_aIYnjk8kBmX40-X9aM"; 
     const CHAT_ID = "8539044860"; 
 
-    const name = document.getElementById('user-name').value;
-    const phone = document.getElementById('user-phone').value;
-    const address = document.getElementById('user-address').value;
-    
+    const nameInput = document.getElementById('user-name');
+    const phoneInput = document.getElementById('user-phone');
+    const addressInput = document.getElementById('user-address');
+
+    if (cart.length === 0) return alert("Savat bo'sh!");
+    if (!nameInput.value || !phoneInput.value || !addressInput.value) {
+        return alert("Iltimos, barcha ma'lumotlarni to'ldiring!");
+    }
+
+    const name = nameInput.value;
+    const phone = phoneInput.value;
+    const address = addressInput.value;
     const payMethodEl = document.querySelector('input[name="pay"]:checked');
     const payMethod = payMethodEl ? payMethodEl.value : "Naqd";
 
-    if (cart.length === 0) return alert("Savat bo'sh!");
-    if (!name || !phone || !address) return alert("Iltimos, barcha ma'lumotlarni to'ldiring!");
-
-    // Ma'lumotlarni brauzerda saqlash
     localStorage.setItem('user_name', name);
     localStorage.setItem('user_phone', phone);
     localStorage.setItem('user_address', address);
@@ -214,9 +218,9 @@ async function finishOrder() {
             closeCart();
             renderCart();
         } else {
-            alert("Xatolik: Botga xabar yuborib bo'lmadi. Botni start qilganingizni tekshiring.");
+            alert("Xatolik: Bot sizga xabar yubora olmayapti. Botga kirib /start tugmasini bosganmisiz?");
         }
     } catch (error) {
-        alert("Internet ulanishini tekshiring!");
+        alert("Internet aloqasini tekshiring!");
     }
 }
