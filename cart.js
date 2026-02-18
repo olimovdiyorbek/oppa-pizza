@@ -34,11 +34,11 @@ const products = [
     { id: 25, category: 'drinks', name: 'Mohitto 0.5L', price: 12000, img: 'drink-1.jpg' },
     { id: 26, category: 'drinks', name: 'Coca-cola 0.5L', price: 12000, img: 'drink-2.jpg' },
     { id: 27, category: 'drinks', name: 'Pepsi 0.5L', price: 12000, img: 'drink-3.jpg' },
-    { id: 28, category: 'drinks', name: 'Fanta o.5L', price: 15000, img: 'drink-4.jpg' },
-    { id: 29, category: 'drinks', name: 'Srite 0.5L', price: 5000, img: 'drink-5.jpg' },
+    { id: 28, category: 'drinks', name: 'Fanta o.5L', price: 12000, img: 'drink-4.jpg' },
+    { id: 29, category: 'drinks', name: 'Sprite 0.5L', price: 12000, img: 'drink-5.jpg' },
     { id: 30, category: 'drinks', name: 'Adrinalin 0.5L', price: 18000, img: 'drink-6.jpg' },
-    { id: 31, category: 'drinks', name: 'Read bull 0.5L', price: 4000, img: 'drink-7.jpg' },
-    { id: 32, category: 'drinks', name: 'Dinay 0.5L', price: 20000, img: 'drink-8.jpg' }
+    { id: 31, category: 'drinks', name: 'Read bull 0.5L', price: 16000, img: 'drink-7.jpg' },
+    { id: 32, category: 'drinks', name: 'Dinay 0.5L', price: 15000, img: 'drink-8.jpg' }
 ];
 
 // 2. HOLATNI BOSHQARISH
@@ -233,6 +233,7 @@ async function finishOrder() {
         alert("Internet aloqasini tekshiring!");
     }
 }
+
 
 
 
