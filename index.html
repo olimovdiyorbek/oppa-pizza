@@ -4,20 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#006747">
-<link rel="apple-touch-icon" href="assets/imgs/icon-192.png">
+    <meta name="theme-color" content="#006747">
+    <link rel="apple-touch-icon" href="assets/imgs/icon-192.png">
 
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js');
-    });
-  }
-</script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('sw.js');
+        });
+      }
+    </script>
     <title>Oppa Pizza Mobile App</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+    <div class="promo-banner">
+        <marquee behavior="scroll" direction="left">
+            🍕 AKSIYA: 2 ta katta pitsa olgan mijozga 1.5L Pepsi sovg'a! 🎁 | 🚚 30 daqiqada yetkazish bepul!
+        </marquee>
+    </div>
 
     <header class="app-header">
         <div class="location">
@@ -29,6 +35,10 @@
             <span class="cart-emoji">🛒</span>
         </div>
     </header>
+
+    <div class="search-container">
+        <input type="text" id="product-search" placeholder="Pitsa yoki ichimlik qidirish..." onkeyup="searchProducts()">
+    </div>
 
     <nav class="categories-wrapper">
         <section class="categories">
@@ -48,8 +58,7 @@
                 <h2>Mening savatim</h2>
             </div>
             
-            <div id="cart-items-list" class="cart-body">
-                </div>
+            <div id="cart-items-list" class="cart-body"></div>
 
             <div class="cart-footer">
                 <div class="user-info-form">
@@ -69,11 +78,11 @@
                     <div class="pay-options">
                         <label class="pay-card">
                             <input type="radio" name="pay" value="Cash" checked>
-                            <div class="pay-design">💵 Naqd</div>
+                            <div class="pay-design">Naqd 💵</div>
                         </label>
                         <label class="pay-card">
                             <input type="radio" name="pay" value="Card">
-                            <div class="pay-design">💳 Karta</div>
+                            <div class="pay-design">Karta 💳</div>
                         </label>
                     </div>
                 </div>
