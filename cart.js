@@ -45,35 +45,45 @@ const products = [
 let cart = JSON.parse(localStorage.getItem('oppa_cart')) || [];
 
 window.onload = () => {
-    if(localStorage.getItem('user_name')) document.getElementById('user-name').value = localStorage.getItem('user_name');
-    if(localStorage.getItem('user_phone')) document.getElementById('user-phone').value = localStorage.getItem('user_phone');
-    if(localStorage.getItem('user_address')) {
-        const addr = localStorage.getItem('user_address');
-        document.getElementById('user-address').value = addr;
-        if(document.getElementById('display-address')) document.getElementById('display-address').innerText = addr;
-    }
-
     updateCartBadge();
     const firstBtn = document.querySelector('.cat-btn');
     if (firstBtn) filterCategory('pizza', firstBtn);
 };
 
-// 3. KATEGORIYANI FILTRLASH
+// 3. QIDIRUV VA FILTRLASH
 function filterCategory(cat, element) {
     document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
-    element.classList.add('active');
+    if (element) element.classList.add('active');
 
+    const filtered = products.filter(p => p.category === cat);
+    renderProducts(filtered);
+}
+
+function searchProducts() {
+    const query = document.getElementById('product-search').value.toLowerCase();
+    const filtered = products.filter(p => p.name.toLowerCase().includes(query));
+    renderProducts(filtered);
+}
+
+function renderProducts(productsList) {
     const list = document.getElementById('pizza-list');
     list.innerHTML = ''; 
 
-    const filtered = products.filter(p => p.category === cat);
-    
-    filtered.forEach(p => {
+    if (productsList.length === 0) {
+        list.innerHTML = '<p style="text-align:center; width:100%; grid-column: 1/3; padding: 20px;">Hech narsa topilmadi 😕</p>';
+        return;
+    }
+
+    productsList.forEach(p => {
         const placeholder = `https://via.placeholder.com/300?text=${p.name}`;
+        // Tasodifiy reyting (yulduzchalar)
+        const ratingStars = "⭐".repeat(5); 
+
         list.innerHTML += `
             <div class="pizza-card">
                 <img src="assets/imgs/${p.img}" onerror="this.src='${placeholder}'">
                 <div class="pizza-info">
+                    <span class="rating">${ratingStars} 5.0</span>
                     <h3>${p.name}</h3>
                     <div class="pizza-footer">
                         <span class="price">${p.price.toLocaleString()} so'm</span>
@@ -162,12 +172,9 @@ function closeCart() {
     document.getElementById('cart-modal').style.display = "none";
 }
 
-// 5. TELEGRAM INTEGRATSIYASI (SIZ UCHUN TO'G'RILANGAN)
+// 5. TELEGRAM INTEGRATSIYASI
 async function finishOrder() {
-    // 1. TOKEN O'ZGARMAYDI
     const BOT_TOKEN = "8539044860:AAF_MNwdQrHUjLsu_aIYnjk8kBmX40-X9aM"; 
-    
-    // 2. DIQQAT: Mana bu yerga sizning shaxsiy ID raqamingizni qo'ydim!
     const CHAT_ID = "6231029845"; 
 
     const nameInput = document.getElementById('user-name');
@@ -185,6 +192,9 @@ async function finishOrder() {
     const payMethodEl = document.querySelector('input[name="pay"]:checked');
     const payMethod = payMethodEl ? payMethodEl.value : "Naqd";
 
+    // Karta uchun eslatma
+    const payNote = payMethod === 'Card' ? "\n⚠️ *Mijozga karta raqamingizni yuboring!*" : "";
+
     let orderDetails = cart.map((item, i) => `${i+1}. *${item.name}* — ${item.quantity} dona`).join('\n');
     let totalSum = cart.reduce((s, item) => s + (item.price * item.quantity), 0);
 
@@ -193,7 +203,7 @@ async function finishOrder() {
                   `👤 *Mijoz:* ${name}\n` +
                   `📞 *Tel:* ${phone}\n` +
                   `📍 *Manzil:* ${address}\n` +
-                  `💳 *To'lov:* ${payMethod === 'Cash' ? 'Naqd' : 'Karta'}\n` +
+                  `💳 *To'lov:* ${payMethod === 'Cash' ? 'Naqd' : 'Karta'}${payNote}\n` +
                   `━━━━━━━━━━━━━━\n` +
                   `📦 *Mahsulotlar:*\n${orderDetails}\n` +
                   `━━━━━━━━━━━━━━\n` +
@@ -211,18 +221,15 @@ async function finishOrder() {
         });
 
         if (response.ok) {
-            alert("Rahmat! Buyurtmangiz Telegram orqali qabul qilindi. ✅");
+            alert("Rahmat! Buyurtmangiz qabul qilindi. ✅");
             cart = [];
             syncStorage();
             closeCart();
             renderCart();
         } else {
-            alert("Xatolik! Iltimos, @oppa_pizza_bot ga kirib 'Start' tugmasini bosganingizni yana bir bor tekshiring.");
+            alert("Xatolik yuz berdi. Iltimos qaytadan urinib ko'ring.");
         }
     } catch (error) {
         alert("Internet aloqasini tekshiring!");
     }
 }
-
-
-
