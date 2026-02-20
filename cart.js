@@ -1,12 +1,12 @@
 // 1. MAHSULOTLAR BAZASI                                    
 const products = [
     // Pitsalar
-    { id: 1, category: 'pizza', name: 'Margarita pitsa', price: 75000, img: 'pizza1.jpg' },
-    { id: 2, category: 'pizza', name: 'Margarita pitsa-2', price: 60000, img: 'pizza2.jpg' },
+    { id: 1, category: 'pizza', name: 'Margarita pitsa kattasi', price: 75000, img: 'pizza1.jpg' },
+    { id: 2, category: 'pizza', name: 'Margarita pitsa', price: 60000, img: 'pizza2.jpg' },
     { id: 3, category: 'pizza', name: 'Pitsa Regina', price: 70000, img: 'pizza3.jpg' },
-    { id: 4, category: 'pizza', name: 'Pomidorli pitsa', price: 85000, img: 'pizza4.jpg' },
+    { id: 4, category: 'pizza', name: 'Pomidorli pitsa kattasi', price: 85000, img: 'pizza4.jpg' },
     { id: 5, category: 'pizza', name: 'Qo\'ziqorinli pitsa', price: 65000, img: 'pizza5.jpg' },
-    { id: 6, category: 'pizza', name: 'Pomidorli pitsa-2', price: 72000, img: 'pizza6.jpg' },
+    { id: 6, category: 'pizza', name: 'Pomidorli pitsa', price: 72000, img: 'pizza6.jpg' },
     { id: 7, category: 'pizza', name: 'Tovuqli pitsa', price: 68000, img: 'pizza7.jpg' },
     { id: 8, category: 'pizza', name: 'Qalbasali pitsa', price: 90000, img: 'pizza8.jpg' },
 
@@ -266,6 +266,7 @@ async function finishOrder() {
         alert("Internet aloqasini tekshiring!");
     }
 }
+
 
 
 
