@@ -1,4 +1,4 @@
-// 1. MAHSULOTLAR BAZASI
+// 1. MAHSULOTLAR BAZASI                                    
 const products = [
     // Pitsalar
     { id: 1, category: 'pizza', name: 'Margarita pitsa', price: 75000, img: 'pizza1.jpg' },
@@ -266,6 +266,7 @@ async function finishOrder() {
         alert("Internet aloqasini tekshiring!");
     }
 }
+
 
 
 
