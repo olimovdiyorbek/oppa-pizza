@@ -65,6 +65,7 @@ function searchProducts() {
     renderProducts(filtered);
 }
 
+// Yangilangan renderProducts: Interaktiv reyting qo'shildi
 function renderProducts(productsList) {
     const list = document.getElementById('pizza-list');
     list.innerHTML = ''; 
@@ -76,14 +77,16 @@ function renderProducts(productsList) {
 
     productsList.forEach(p => {
         const placeholder = `https://via.placeholder.com/300?text=${p.name}`;
-        // Tasodifiy reyting (yulduzchalar)
-        const ratingStars = "⭐".repeat(5); 
+        // Har bir mahsulot uchun alohida saqlangan reytingni olish
+        const savedRating = localStorage.getItem(`rating_${p.id}`) || 5;
 
         list.innerHTML += `
             <div class="pizza-card">
                 <img src="assets/imgs/${p.img}" onerror="this.src='${placeholder}'">
                 <div class="pizza-info">
-                    <span class="rating">${ratingStars} 5.0</span>
+                    <div class="rating-box" id="rating-stars-${p.id}">
+                        ${generateStars(p.id, savedRating)}
+                    </div>
                     <h3>${p.name}</h3>
                     <div class="pizza-footer">
                         <span class="price">${p.price.toLocaleString()} so'm</span>
@@ -92,6 +95,25 @@ function renderProducts(productsList) {
                 </div>
             </div>`;
     });
+}
+
+// Reyting yulduzchalarini generatsiya qilish
+function generateStars(productId, rating) {
+    let starsHtml = '';
+    for (let i = 1; i <= 5; i++) {
+        starsHtml += `<span onclick="setRating(${productId}, ${i})" 
+                      style="cursor:pointer; color: ${i <= rating ? '#f1c40f' : '#ccc'}; font-size: 18px;">★</span>`;
+    }
+    return starsHtml + ` <small style="color:#888;">${rating}.0</small>`;
+}
+
+// Foydalanuvchi bahosini saqlash
+function setRating(productId, value) {
+    localStorage.setItem(`rating_${productId}`, value);
+    // Sahifani qayta chizmasdan yulduzlarni yangilash
+    const starBox = document.getElementById(`rating-stars-${productId}`);
+    if(starBox) starBox.innerHTML = generateStars(productId, value);
+    alert("Baholaganingiz uchun rahmat! ⭐");
 }
 
 // 4. SAVAT BILAN ISHLASH
@@ -172,7 +194,7 @@ function closeCart() {
     document.getElementById('cart-modal').style.display = "none";
 }
 
-// 5. TELEGRAM INTEGRATSIYASI
+// 5. TELEGRAM INTEGRATSIYASI VA BUYURTMA HISOBI
 async function finishOrder() {
     const BOT_TOKEN = "8539044860:AAF_MNwdQrHUjLsu_aIYnjk8kBmX40-X9aM"; 
     const CHAT_ID = "6231029845"; 
@@ -186,19 +208,29 @@ async function finishOrder() {
         return alert("Iltimos, barcha ma'lumotlarni to'ldiring!");
     }
 
+    // --- BUYURTMA SONINI HISOBLASH MANTIG'I ---
+    let orderHistoryCount = parseInt(localStorage.getItem('oppa_order_total_count')) || 0;
+    orderHistoryCount += 1; // Yangi buyurtma qo'shildi
+    localStorage.setItem('oppa_order_total_count', orderHistoryCount);
+
+    let giftMessage = "";
+    // Har 5-buyurtma uchun sovg'a eslatmasi
+    if (orderHistoryCount % 5 === 0) {
+        giftMessage = "\n\n🎁 *AKSIYA:* Bu mijozning " + orderHistoryCount + "-buyurtmasi! *0.5L PEPSI QO'SHIB BERING!* 🥤";
+    }
+    // ------------------------------------------
+
     const name = nameInput.value;
     const phone = phoneInput.value;
     const address = addressInput.value;
     const payMethodEl = document.querySelector('input[name="pay"]:checked');
     const payMethod = payMethodEl ? payMethodEl.value : "Naqd";
-
-    // Karta uchun eslatma
     const payNote = payMethod === 'Card' ? "\n⚠️ *Mijozga karta raqamingizni yuboring!*" : "";
 
     let orderDetails = cart.map((item, i) => `${i+1}. *${item.name}* — ${item.quantity} dona`).join('\n');
     let totalSum = cart.reduce((s, item) => s + (item.price * item.quantity), 0);
 
-    const message = `🚀 *YANGI BUYURTMA!*\n` +
+    const message = `🚀 *YANGI BUYURTMA (№${orderHistoryCount})*\n` +
                   `━━━━━━━━━━━━━━\n` +
                   `👤 *Mijoz:* ${name}\n` +
                   `📞 *Tel:* ${phone}\n` +
@@ -207,7 +239,8 @@ async function finishOrder() {
                   `━━━━━━━━━━━━━━\n` +
                   `📦 *Mahsulotlar:*\n${orderDetails}\n` +
                   `━━━━━━━━━━━━━━\n` +
-                  `💰 *JAMI:* ${totalSum.toLocaleString()} so'm`;
+                  `💰 *JAMI:* ${totalSum.toLocaleString()} so'm` + 
+                  giftMessage;
 
     try {
         const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
@@ -221,7 +254,7 @@ async function finishOrder() {
         });
 
         if (response.ok) {
-            alert("Rahmat! Buyurtmangiz qabul qilindi. ✅");
+            alert(`Rahmat! Buyurtmangiz qabul qilindi. Bu sizning ${orderHistoryCount}-buyurtmangiz. ✅`);
             cart = [];
             syncStorage();
             closeCart();
@@ -233,17 +266,3 @@ async function finishOrder() {
         alert("Internet aloqasini tekshiring!");
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
