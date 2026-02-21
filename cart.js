@@ -1,4 +1,21 @@
-// 1. MAHSULOTLAR BAZASI                                    
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+// --- FIREBASE SOZLAMALARI ---
+const firebaseConfig = {
+    apiKey: "AIzaSyCRkhvyKav1040Y1mxNHwze9cen7Iexb5k",
+    authDomain: "oppa-pizza-42a19.firebaseapp.com",
+    projectId: "oppa-pizza-42a19",
+    storageBucket: "oppa-pizza-42a19.firebasestorage.app",
+    messagingSenderId: "331899141018",
+    appId: "1:331899141018:web:740411706691763750f0c0",
+    databaseURL: "https://oppa-pizza-42a19-default-rtdb.firebaseio.com"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// 1. MAHSULOTLAR BAZASI                                     
 const products = [
     // Pitsalar
     { id: 1, category: 'pizza', name: 'Margarita pitsa kattasi', price: 75000, img: 'pizza1.jpg' },
@@ -67,6 +84,7 @@ function searchProducts() {
 
 function renderProducts(productsList) {
     const list = document.getElementById('pizza-list');
+    if (!list) return;
     list.innerHTML = ''; 
 
     if (productsList.length === 0) {
@@ -122,13 +140,12 @@ function addToCart(productId) {
         cart.push({ ...product, quantity: 1 });
     }
 
-    // --- MARKETING: UPSELL (Pepsi taklifi) ---
     if (product.category === 'pizza') {
         const hasDrink = cart.some(item => item.category === 'drinks');
         if (!hasDrink) {
             setTimeout(() => {
                 if(confirm("Pitsa bilan muzdek Pepsi ham olasizmi? 🥤")) {
-                    addToCart(27); // 27 - Pepsi ID si
+                    addToCart(27); 
                     renderCart();
                 }
             }, 500);
@@ -150,7 +167,8 @@ function updateCartBadge() {
 }
 
 function openCart() {
-    document.getElementById('cart-modal').style.display = "block";
+    const modal = document.getElementById('cart-modal');
+    if (modal) modal.style.display = "block";
     renderCart();
 }
 
@@ -168,14 +186,13 @@ function renderCart() {
         return;
     }
 
-    // --- PROGRES BAR (Sovg'agacha qancha qoldi) ---
     let totalPizzasBought = parseInt(localStorage.getItem('total_pizzas_bought')) || 0;
     const progressPercent = (totalPizzasBought / 5) * 100;
     list.innerHTML += `
         <div class="promo-progress-container" style="padding: 10px; background: #fff9e6; border-radius: 8px; margin-bottom: 15px; border: 1px dashed #f1c40f;">
-            <p style="font-size: 13px; margin-bottom: 5px;">🎁 <b>Sovg'agacha:</b> yana ${5 - totalPizzasBought} ta katta pitsa oling!</p>
+            <p style="font-size: 13px; margin-bottom: 5px;">🎁 <b>Sovg'agacha:</b> yana ${Math.max(0, 5 - totalPizzasBought)} ta katta pitsa oling!</p>
             <div style="width: 100%; height: 8px; background: #eee; border-radius: 4px; overflow: hidden;">
-                <div style="width: ${progressPercent}%; height: 100%; background: #2ecc71; transition: 0.3s;"></div>
+                <div style="width: ${Math.min(100, progressPercent)}%; height: 100%; background: #2ecc71; transition: 0.3s;"></div>
             </div>
         </div>
     `;
@@ -212,10 +229,11 @@ function changeQty(id, delta) {
 }
 
 function closeCart() {
-    document.getElementById('cart-modal').style.display = "none";
+    const modal = document.getElementById('cart-modal');
+    if (modal) modal.style.display = "none";
 }
 
-// 5. TELEGRAM INTEGRATSIYASI VA BUYURTMA HISOBI
+// 5. TELEGRAM VA FIREBASE INTEGRATSIYASI
 async function finishOrder() {
     const BOT_TOKEN = "8539044860:AAF_MNwdQrHUjLsu_aIYnjk8kBmX40-X9aM"; 
     const CHAT_ID = "6231029845"; 
@@ -252,57 +270,64 @@ async function finishOrder() {
     const address = addressInput.value;
     const payMethodEl = document.querySelector('input[name="pay"]:checked');
     const payMethod = payMethodEl ? payMethodEl.value : "Naqd";
-    const payNote = payMethod === 'Card' ? "\n⚠️ *Mijozga karta raqamingizni yuboring!*" : "";
-
-    let orderDetails = cart.map((item, i) => `${i+1}. *${item.name}* — ${item.quantity} dona`).join('\n');
+    
+    let orderDetailsText = cart.map((item, i) => `${i+1}. *${item.name}* — ${item.quantity} dona`).join('\n');
     let totalSum = cart.reduce((s, item) => s + (item.price * item.quantity), 0);
 
-    const message = `🚀 *YANGI BUYURTMA (№${orderHistoryCount})*\n` +
+    const firebaseOrder = {
+        customer: name,
+        phone: phone,
+        address: address,
+        orderDetails: orderDetailsText.replace(/\*/g, ''), // Firebase uchun yulduzchalarsiz
+        total: totalSum,
+        date: new Date().toLocaleString(),
+        payment: payMethod
+    };
+
+    const tgMessage = `🚀 *YANGI BUYURTMA (№${orderHistoryCount})*\n` +
                   `━━━━━━━━━━━━━━\n` +
                   `👤 *Mijoz:* ${name}\n` +
                   `📞 *Tel:* ${phone}\n` +
                   `📍 *Manzil:* ${address}\n` +
-                  `💳 *To'lov:* ${payMethod === 'Cash' ? 'Naqd' : 'Karta'}${payNote}\n` +
+                  `💳 *To'lov:* ${payMethod === 'Cash' ? 'Naqd' : 'Karta'}\n` +
                   `━━━━━━━━━━━━━━\n` +
-                  `📦 *Mahsulotlar:*\n${orderDetails}\n` +
+                  `📦 *Mahsulotlar:*\n${orderDetailsText}\n` +
                   `━━━━━━━━━━━━━━\n` +
                   `🍕 *Katta pitsalar balansi:* ${totalPizzasBought}/5 ta\n` + 
                   `💰 *JAMI:* ${totalSum.toLocaleString()} so'm` + 
                   giftMessage;
 
     try {
+        // 1. Firebase-ga saqlash
+        await push(ref(db, 'orders'), firebaseOrder);
+
+        // 2. Telegram-ga yuborish
         const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chat_id: CHAT_ID, text: message, parse_mode: 'Markdown' })
+            body: JSON.stringify({ chat_id: CHAT_ID, text: tgMessage, parse_mode: 'Markdown' })
         });
 
         if (response.ok) {
-            // --- ADMIN PANEL UCHUN SAQLASH ---
-            const newOrder = {
-                id: Date.now(),
-                customer: name,
-                phone: phone,
-                address: address,
-                items: cart,
-                total: totalSum,
-                date: new Date().toLocaleString(),
-                status: "Yangi"
-            };
-            let allOrders = JSON.parse(localStorage.getItem('oppa_orders')) || [];
-            allOrders.push(newOrder);
-            localStorage.setItem('oppa_orders', JSON.stringify(allOrders));
-
             alert(`Rahmat! Buyurtmangiz qabul qilindi. ✅`);
             cart = [];
             syncStorage();
             closeCart();
-            renderCart();
+            location.reload();
         } else {
-            alert("Xatolik yuz berdi.");
+            alert("Telegramga yuborishda xatolik, lekin buyurtma bazaga tushdi.");
         }
     } catch (error) {
-        alert("Internet aloqasini tekshiring!");
+        alert("Xatolik yuz berdi: " + error.message);
     }
 }
 
+// FUNKSIYALARNI GLOBAL QILISH (Module rejimida ishlashi uchun)
+window.filterCategory = filterCategory;
+window.searchProducts = searchProducts;
+window.addToCart = addToCart;
+window.openCart = openCart;
+window.closeCart = closeCart;
+window.changeQty = changeQty;
+window.finishOrder = finishOrder;
+window.setRating = setRating;
