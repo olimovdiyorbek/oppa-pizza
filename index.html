@@ -16,8 +16,32 @@
     </script>
     <title>Oppa Pizza Mobile App</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Tungi rejim xabari uchun qo'shimcha stil */
+        .night-mode-alert {
+            display: none;
+            background: #2c3e50;
+            color: #ecf0f1;
+            text-align: center;
+            padding: 5px;
+            font-size: 12px;
+        }
+        /* Admin linki uchun stil */
+        .admin-secret-link {
+            display: block;
+            text-align: center;
+            padding: 20px;
+            color: #eee;
+            text-decoration: none;
+            font-size: 10px;
+        }
+    </style>
 </head>
 <body>
+
+    <div id="night-alert" class="night-mode-alert">
+        🌙 Tungi rejim: 22:00 dan keyin yetkazib berish xizmati +10% 
+    </div>
 
     <div class="promo-banner">
         <marquee behavior="scroll" direction="left">
@@ -92,13 +116,15 @@
         </div>
     </div>
 
+    <a href="admin.html" class="admin-secret-link">Boshqaruv paneli</a>
+
     <script src="cart.js"></script>
+    <script>
+        // Tungi rejimni tekshirish (Marketing bombasi)
+        const hour = new Date().getHours();
+        if (hour >= 22 || hour < 6) {
+            document.getElementById('night-alert').style.display = 'block';
+        }
+    </script>
 </body>
 </html>
-
-
-
-
-
-
-
