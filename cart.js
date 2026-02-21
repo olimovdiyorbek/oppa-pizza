@@ -208,16 +208,33 @@ async function finishOrder() {
         return alert("Iltimos, barcha ma'lumotlarni to'ldiring!");
     }
 
-    // --- BUYURTMA SONINI HISOBLASH MANTIG'I ---
-    let orderHistoryCount = parseInt(localStorage.getItem('oppa_order_total_count')) || 0;
-    orderHistoryCount += 1; // Yangi buyurtma qo'shildi
-    localStorage.setItem('oppa_order_total_count', orderHistoryCount);
+    // --- FAQAT MAXSUS PITSALARNI SANASH (ID: 1 va ID: 4) ---
+    // Savatdan faqat Margarita Katta (1) va Pomidorli Katta (4) pitsalarini ajratib olamiz
+    const specialPizzas = cart.filter(item => item.id === 1 || item.id === 4);
+    const pizzaCountInOrder = specialPizzas.reduce((sum, item) => sum + item.quantity, 0);
+
+    // LocalStorage-dan shu paytgacha yig'ilgan maxsus pitsalar sonini olamiz
+    let totalPizzasBought = parseInt(localStorage.getItem('total_pizzas_bought')) || 0;
+    
+    // Yangi buyurtmadagi pitsalarni umumiy hisobga qo'shamiz
+    totalPizzasBought += pizzaCountInOrder;
 
     let giftMessage = "";
-    // Har 5-buyurtma uchun sovg'a eslatmasi
-    if (orderHistoryCount % 5 === 0) {
-        giftMessage = "\n\n🎁 *AKSIYA:* Bu mijozning " + orderHistoryCount + "-buyurtmasi! *0.5L PEPSI QO'SHIB BERING!* 🥤";
+    // Agar jami pitsalar soni 5 tadan oshsa, sovg'a xabarini tayyorlaymiz
+    if (totalPizzasBought >= 5) {
+        giftMessage = "\n\n🎁 *AKSIYA: MIJOZ JAMI 5 TA KATTA PITSA OLDI! 0.5L PEPSI QO'SHIB BERING!* 🥤";
+        
+        // Sovg'a berilgach, hisobdan 5 tani ayiramiz (qoldiq keyingi sovg'aga saqlanadi)
+        totalPizzasBought = totalPizzasBought - 5; 
     }
+
+    // Yangilangan pitsalar balansini saqlaymiz
+    localStorage.setItem('total_pizzas_bought', totalPizzasBought);
+
+    // Umumiy buyurtmalar sonini sanash (statistika uchun)
+    let orderHistoryCount = parseInt(localStorage.getItem('oppa_order_total_count')) || 0;
+    orderHistoryCount += 1;
+    localStorage.setItem('oppa_order_total_count', orderHistoryCount);
     // ------------------------------------------
 
     const name = nameInput.value;
@@ -239,6 +256,7 @@ async function finishOrder() {
                   `━━━━━━━━━━━━━━\n` +
                   `📦 *Mahsulotlar:*\n${orderDetails}\n` +
                   `━━━━━━━━━━━━━━\n` +
+                  `🍕 *Katta pitsalar balansi:* ${totalPizzasBought}/5 ta\n` + 
                   `💰 *JAMI:* ${totalSum.toLocaleString()} so'm` + 
                   giftMessage;
 
@@ -254,7 +272,7 @@ async function finishOrder() {
         });
 
         if (response.ok) {
-            alert(`Rahmat! Buyurtmangiz qabul qilindi. Bu sizning ${orderHistoryCount}-buyurtmangiz. ✅`);
+            alert(`Rahmat! Buyurtmangiz qabul qilindi. ✅`);
             cart = [];
             syncStorage();
             closeCart();
@@ -266,13 +284,3 @@ async function finishOrder() {
         alert("Internet aloqasini tekshiring!");
     }
 }
-
-
-
-
-
-
-
-
-
-
