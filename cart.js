@@ -331,3 +331,4 @@ window.closeCart = closeCart;
 window.changeQty = changeQty;
 window.finishOrder = finishOrder;
 window.setRating = setRating;
+
