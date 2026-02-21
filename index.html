@@ -1,131 +1,166 @@
 <!DOCTYPE html>
+
 <html lang="uz">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <link rel="manifest" href="manifest.json">
+
     <meta name="theme-color" content="#006747">
+
     <link rel="apple-touch-icon" href="assets/imgs/icon-192.png">
 
     <script>
+
       if ('serviceWorker' in navigator) {
+
         window.addEventListener('load', () => {
+
           navigator.serviceWorker.register('sw.js');
+
         });
+
       }
+
     </script>
+
     <title>Oppa Pizza Mobile App</title>
+
     <link rel="stylesheet" href="style.css">
-    <style>
-        /* Tungi rejim xabari uchun qo'shimcha stil */
-        .night-mode-alert {
-            display: none;
-            background: #2c3e50;
-            color: #ecf0f1;
-            text-align: center;
-            padding: 5px;
-            font-size: 12px;
-        }
-        /* Admin linki uchun stil */
-        .admin-secret-link {
-            display: block;
-            text-align: center;
-            padding: 20px;
-            color: #eee;
-            text-decoration: none;
-            font-size: 10px;
-        }
-    </style>
+
 </head>
+
 <body>
 
-    <div id="night-alert" class="night-mode-alert">
-        🌙 Tungi rejim: 22:00 dan keyin yetkazib berish xizmati +10% 
-    </div>
-
     <div class="promo-banner">
+
         <marquee behavior="scroll" direction="left">
+
             🍕 AKSIYA: 5 ta katta pitsa olgan mijozga 0.5L Pepsi sovg'a! 🎁 | 🚚 30 daqiqada yetkazib beriladi!
+
         </marquee>
+
     </div>
 
     <header class="app-header">
+
         <div class="location">
+
             <span>Yetkazib berish:</span>
+
             <strong id="display-address">Manzilni kiriting...</strong>
+
         </div>
+
         <div class="cart-icon" onclick="openCart()">
+
             <span class="badge">0</span>
+
             <span class="cart-emoji">🛒</span>
+
         </div>
+
     </header>
 
     <div class="search-container">
+
         <input type="text" id="product-search" placeholder="Pitsa yoki ichimlik qidirish..." onkeyup="searchProducts()">
+
     </div>
 
     <nav class="categories-wrapper">
+
         <section class="categories">
+
             <button class="cat-btn active" onclick="filterCategory('pizza', this)">Pitsalar</button>
+
             <button class="cat-btn" onclick="filterCategory('food', this)">Taomlar</button>
+
             <button class="cat-btn" onclick="filterCategory('dessert', this)">Desertlar</button>
+
             <button class="cat-btn" onclick="filterCategory('drinks', this)">Ichimliklar</button>
+
         </section>
+
     </nav>
 
     <main class="product-grid" id="pizza-list"></main>
 
     <div id="cart-modal" class="modal">
+
         <div class="modal-content">
+
             <div class="modal-header">
-                <span class="close-modal" onclick="closeCart()">&times;</span>
+
+                <span class="close-modal" onclick="closeCart()">×</span>
+
                 <h2>Mening savatim</h2>
+
             </div>
-            
+
             <div id="cart-items-list" class="cart-body"></div>
 
             <div class="cart-footer">
-                <div class="user-info-form">
-                    <h3>Ma'lumotlaringiz:</h3>
-                    <input type="text" id="user-name" placeholder="Ismingiz">
-                    <input type="tel" id="user-phone" placeholder="Telefon (masalan: +998901234567)">
-                    <textarea id="user-address" placeholder="Yetkazib berish manzili"></textarea>
-                </div>
 
+                <div class="user-info-form">
+
+                    <h3>Ma'lumotlaringiz:</h3>
+
+                    <input type="text" id="user-name" placeholder="Ismingiz">
+
+                    <input type="tel" id="user-phone" placeholder="Telefon (masalan: +998901234567)">
+
+                    <textarea id="user-address" placeholder="Yetkazib berish manzili"></textarea>
+
+                </div>
+                
                 <div class="total-section">
-                    <span>Umumiy summa:</span>
+
+                    <span>The sum is:</span>
+
                     <strong id="cart-total-price">0 so'm</strong>
+
                 </div>
                 
                 <div class="payment-methods">
+
                     <p>To'lov usulini tanlang:</p>
+
                     <div class="pay-options">
+
                         <label class="pay-card">
+
                             <input type="radio" name="pay" value="Cash" checked>
+
                             <div class="pay-design">Naqd 💵</div>
+
                         </label>
+
                         <label class="pay-card">
+
                             <input type="radio" name="pay" value="Card">
+
                             <div class="pay-design">Karta 💳</div>
+
                         </label>
+
                     </div>
+
                 </div>
-                
+
                 <button class="checkout-btn" onclick="finishOrder()">Buyurtmani rasmiylashtirish</button>
+
             </div>
+
         </div>
+
     </div>
 
-    <a href="admin.html" class="admin-secret-link">Boshqaruv paneli</a>
-
     <script src="cart.js"></script>
-    <script>
-        // Tungi rejimni tekshirish (Marketing bombasi)
-        const hour = new Date().getHours();
-        if (hour >= 22 || hour < 6) {
-            document.getElementById('night-alert').style.display = 'block';
-        }
-    </script>
+
 </body>
 </html>
-
