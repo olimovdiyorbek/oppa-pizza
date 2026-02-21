@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boshqaruv Paneli - OPPA</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #f4f4f4; }
+        .admin-card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background: #006747; color: white; }
+        .profit-box { background: #2ecc71; color: white; padding: 15px; border-radius: 8px; display: inline-block; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div class="admin-card">
+        <h1>Buyurtmalar Nazorati</h1>
+        <div class="profit-box">
+            Umumiy tushum: <span id="total-revenue">0</span> so'm
+        </div>
+        <table id="orders-table">
+            <thead>
+                <tr>
+                    <th>Sana</th>
+                    <th>Mijoz</th>
+                    <th>Mahsulotlar</th>
+                    <th>Summa</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <button onclick="localStorage.removeItem('oppa_orders'); location.reload();" style="margin-top:20px; background:#e74c3c; color:white; border:none; padding:10px; border-radius:5px; cursor:pointer;">
+            Tarixni tozalash
+        </button>
+    </div>
+
+    <script>
+        function displayOrders() {
+            const orders = JSON.parse(localStorage.getItem('oppa_orders')) || [];
+            const tableBody = document.querySelector('#orders-table tbody');
+            let total = 0;
+
+            orders.reverse().forEach(order => {
+                total += order.total;
+                const row = `<tr>
+                    <td>${order.date}</td>
+                    <td>${order.customer}<br><small>${order.phone}</small></td>
+                    <td>${order.items.map(i => i.name + ' (' + i.quantity + ')').join(', ')}</td>
+                    <td>${order.total.toLocaleString()} so'm</td>
+                </tr>`;
+                tableBody.innerHTML += row;
+            });
+            document.getElementById('total-revenue').innerText = total.toLocaleString();
+        }
+        window.onload = displayOrders;
+    </script>
+</body>
+</html>
