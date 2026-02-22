@@ -244,3 +244,4 @@ window.finishOrder = async function() {
         alert("Internet aloqasini tekshiring!");
     }
 }
+
