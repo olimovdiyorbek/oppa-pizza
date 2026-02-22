@@ -243,5 +243,54 @@ window.finishOrder = async function() {
     } catch (error) {
         alert("Internet aloqasini tekshiring!");
     }
+// --- ADMIN PANEL FUNKSIYALARI ---
+
+// 1. Buyurtmalarni ekranga chiqarish
+window.renderAdminOrders = function() {
+    const adminList = document.getElementById('admin-orders-list');
+    if (!adminList) return;
+
+    let allOrders = JSON.parse(localStorage.getItem('oppa_orders')) || [];
+    adminList.innerHTML = '';
+
+    if (allOrders.length === 0) {
+        adminList.innerHTML = '<tr><td colspan="6" style="text-align:center;">Hozircha buyurtmalar yo\'q</td></tr>';
+        return;
+    }
+
+    allOrders.reverse().forEach((order, index) => {
+        let itemsHtml = order.items.map(i => `${i.name} (${i.quantity} ta)`).join(', ');
+        
+        adminList.innerHTML += `
+            <tr>
+                <td>${index + 1}</td>
+                <td>${order.customer}<br><small>${order.phone}</small></td>
+                <td>${order.address}</td>
+                <td>${itemsHtml}</td>
+                <td>${order.total.toLocaleString()} so'm</td>
+                <td>
+                    <button onclick="deleteOrder(${order.id})" style="background:#e74c3c; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;">O'chirish</button>
+                </td>
+            </tr>
+        `;
+    });
 }
+
+// 2. Buyurtmani o'chirish
+window.deleteOrder = function(orderId) {
+    if (confirm("Ushbu buyurtmani o'chirishni xohlaysizmi?")) {
+        let allOrders = JSON.parse(localStorage.getItem('oppa_orders')) || [];
+        allOrders = allOrders.filter(o => o.id !== orderId);
+        localStorage.setItem('oppa_orders', JSON.stringify(allOrders));
+        renderAdminOrders(); // Ro'yxatni yangilash
+    }
+}
+
+// 3. Admin panelga kirganda avtomatik yuklash
+if (document.getElementById('admin-orders-list')) {
+    window.renderAdminOrders();
+}
+    
+}
+
 
