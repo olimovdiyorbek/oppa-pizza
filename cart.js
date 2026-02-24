@@ -1,4 +1,4 @@
-// 1. MAHSULOTLAR BAZASI (O'zgarishsiz qoldi)
+// 1. MAHSULOTLAR BAZASI
 const products = [
     { id: 1, category: 'pizza', name: 'Margarita pitsa kattasi', price: 75000, img: 'pizza1.jpg' },
     { id: 2, category: 'pizza', name: 'Margarita pitsa', price: 60000, img: 'pizza2.jpg' },
@@ -40,9 +40,11 @@ window.onload = () => {
     updateCartBadge();
     const firstBtn = document.querySelector('.cat-btn');
     if (firstBtn) filterCategory('pizza', firstBtn);
+    // Agar admin panel bo'lsa yuklash
+    if (document.getElementById('admin-orders-list')) renderAdminOrders();
 };
 
-// 3. QIDIRUV VA FILTRLASH (Window orqali global qilindi)
+// 3. QIDIRUV VA FILTRLASH
 window.filterCategory = function(cat, element) {
     document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
     if (element) element.classList.add('active');
@@ -99,7 +101,7 @@ window.setRating = function(productId, value) {
     alert("Baholaganingiz uchun rahmat! ⭐");
 }
 
-// 4. SAVAT BILAN ISHLASH (Window orqali global qilindi)
+// 4. SAVAT BILAN ISHLASH
 window.addToCart = function(productId) {
     const product = products.find(p => p.id === productId);
     const existingItem = cart.find(item => item.id === productId);
@@ -149,24 +151,26 @@ function renderCart() {
         totalEl.innerText = "0 so'm";
         return;
     }
-    let totalPizzasBought = parseInt(localStorage.getItem('total_pizzas_bought')) || 0;
-    const progressPercent = (totalPizzasBought / 5) * 100;
+
+    // Savatda progres ko'rsatish (Oxirgi kiritilgan raqam bo'yicha)
+    const lastPhone = localStorage.getItem('last_customer_phone') || "";
+    let currentBalance = lastPhone ? (parseInt(localStorage.getItem(`pizzas_balance_${lastPhone}`)) || 0) : 0;
+    const progressPercent = (currentBalance / 5) * 100;
+
     list.innerHTML += `
         <div class="promo-progress-container" style="padding: 10px; background: #fff9e6; border-radius: 8px; margin-bottom: 15px; border: 1px dashed #f1c40f;">
-            <p style="font-size: 13px; margin-bottom: 5px;">🎁 <b>Sovg'agacha:</b> yana ${5 - totalPizzasBought} ta katta pitsa oling!</p>
+            <p style="font-size: 12px; margin-bottom: 5px;">🎁 <b>Mijoz balansi (${lastPhone}):</b> ${currentBalance}/5 ta</p>
             <div style="width: 100%; height: 8px; background: #eee; border-radius: 4px; overflow: hidden;">
                 <div style="width: ${progressPercent}%; height: 100%; background: #2ecc71; transition: 0.3s;"></div>
             </div>
         </div>`;
+
     cart.forEach(item => {
         const itemTotal = item.price * item.quantity;
         totalSum += itemTotal;
         list.innerHTML += `
             <div class="cart-item-row">
-                <div class="item-info">
-                    <strong>${item.name}</strong>
-                    <span>${item.price.toLocaleString()} so'm</span>
-                </div>
+                <div class="item-info"><strong>${item.name}</strong><span>${item.price.toLocaleString()} so'm</span></div>
                 <div class="qty-controls">
                     <button onclick="changeQty(${item.id}, -1)">-</button>
                     <span>${item.quantity}</span>
@@ -192,41 +196,62 @@ window.closeCart = function() {
     document.getElementById('cart-modal').style.display = "none";
 }
 
-// 5. TELEGRAM INTEGRATSIYASI (Window orqali global qilindi)
+// 5. TELEGRAM INTEGRATSIYASI VA INDIVIDUAL BONUS
 window.finishOrder = async function() {
     const BOT_TOKEN = "8539044860:AAF_MNwdQrHUjLsu_aIYnjk8kBmX40-X9aM";
     const CHAT_ID = "6231029845";
     const nameInput = document.getElementById('user-name');
     const phoneInput = document.getElementById('user-phone');
     const addressInput = document.getElementById('user-address');
+
     if (cart.length === 0) return alert("Savat bo'sh!");
     if (!nameInput.value || !phoneInput.value || !addressInput.value) {
-        return alert("Iltimos, barcha ma'lumotlarni to'ldiring!");
+        return alert("Iltimos, ma'lumotlarni to'ldiring!");
     }
+
+    const phone = phoneInput.value.trim();
+    localStorage.setItem('last_customer_phone', phone); // Keyingi safar eslab qolish uchun
+
+    // 1. Shu mijozning shaxsiy balansini hisoblash
+    let customerBalance = parseInt(localStorage.getItem(`pizzas_balance_${phone}`)) || 0;
     const specialPizzas = cart.filter(item => item.id === 1 || item.id === 4);
     const pizzaCountInOrder = specialPizzas.reduce((sum, item) => sum + item.quantity, 0);
-    let totalPizzasBought = parseInt(localStorage.getItem('total_pizzas_bought')) || 0;
-    totalPizzasBought += pizzaCountInOrder;
+    
+    customerBalance += pizzaCountInOrder;
     let giftMessage = "";
-    if (totalPizzasBought >= 5) {
-        giftMessage = "\n\n🎁 *AKSIYA: MIJOZ JAMI 5 TA KATTA PITSA OLDI! 0.5L PEPSI QO'SHIB BERING!* 🥤";
-        totalPizzasBought = totalPizzasBought - 5;
+
+    // 2. Bonus mantiqi (Har bir mijoz uchun 1-5 sikli)
+    if (customerBalance >= 5) {
+        giftMessage = "\n\n🎁 *AKSIYA: MIJOZ 5 TA PITSA OLDI! 0.5L PEPSI SOVG'A!* 🥤";
+        customerBalance = customerBalance % 5; 
     }
-    localStorage.setItem('total_pizzas_bought', totalPizzasBought);
+    localStorage.setItem(`pizzas_balance_${phone}`, customerBalance);
+
+    // 3. Admin panel uchun buyurtmani saqlash
+    let allOrders = JSON.parse(localStorage.getItem('oppa_orders')) || [];
+    const newOrder = {
+        id: Date.now(),
+        customer: nameInput.value,
+        phone: phone,
+        address: addressInput.value,
+        items: [...cart],
+        total: cart.reduce((s, i) => s + (i.price * i.quantity), 0),
+        date: new Date().toLocaleString()
+    };
+    allOrders.push(newOrder);
+    localStorage.setItem('oppa_orders', JSON.stringify(allOrders));
+
+    // 4. Telegramga xabar yuborish
     let orderHistoryCount = parseInt(localStorage.getItem('oppa_order_total_count')) || 0;
     orderHistoryCount += 1;
     localStorage.setItem('oppa_order_total_count', orderHistoryCount);
-    const name = nameInput.value;
-    const phone = phoneInput.value;
-    const address = addressInput.value;
+
     const payMethodEl = document.querySelector('input[name="pay"]:checked');
     const payMethod = payMethodEl ? payMethodEl.value : "Naqd";
-    const payNote = payMethod === 'Card' ? "\n⚠️ *Mijozga karta raqamingizni yuboring!*" : "";
-    let orderDetails = cart.map((item, i) => `${i + 1}. *${item.name}* — ${item.quantity} dona`).join('\n');
-    let totalSum = cart.reduce((s, item) => s + (item.price * item.quantity), 0);
-    const message = `🚀 *YANGI BUYURTMA (№${orderHistoryCount})*\n` +
-        `━━━━━━━━━━━━━━\n👤 *Mijoz:* ${name}\n📞 *Tel:* ${phone}\n📍 *Manzil:* ${address}\n💳 *To'lov:* ${payMethod === 'Cash' ? 'Naqd' : 'Karta'}${payNote}\n━━━━━━━━━━━━━━\n📦 *Mahsulotlar:*\n${orderDetails}\n━━━━━━━━━━━━━━\n🍕 *Katta pitsalar balansi:* ${totalPizzasBought}/5 ta\n💰 *JAMI:* ${totalSum.toLocaleString()} so'm` +
-        giftMessage;
+    let orderDetails = cart.map((item, i) => `${i + 1}. *${item.name}* — ${item.quantity} ta`).join('\n');
+    
+    const message = `🚀 *YANGI BUYURTMA (№${orderHistoryCount})*\n━━━━━━━━━━━━━━\n👤 *Mijoz:* ${newOrder.customer}\n📞 *Tel:* ${phone}\n📍 *Manzil:* ${newOrder.address}\n💳 *To'lov:* ${payMethod === 'Cash' ? 'Naqd' : 'Karta'}\n━━━━━━━━━━━━━━\n📦 *Mahsulotlar:*\n${orderDetails}\n━━━━━━━━━━━━━━\n🍕 *Mijoz shaxsiy balansi:* ${customerBalance}/5 ta\n💰 *JAMI:* ${newOrder.total.toLocaleString()} so'm` + giftMessage;
+
     try {
         const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
             method: 'POST',
@@ -234,18 +259,16 @@ window.finishOrder = async function() {
             body: JSON.stringify({ chat_id: CHAT_ID, text: message, parse_mode: 'Markdown' })
         });
         if (response.ok) {
-            alert(`Rahmat! Buyurtmangiz qabul qilindi. ✅`);
+            alert(`Rahmat ${newOrder.customer}! Buyurtmangiz qabul qilindi. ✅`);
             cart = [];
             syncStorage();
             closeCart();
             renderCart();
         }
-    } catch (error) {
-        alert("Internet aloqasini tekshiring!");
-    }
-// --- ADMIN PANEL FUNKSIYALARI ---
+    } catch (error) { alert("Xatolik yuz berdi!"); }
+}
 
-// 1. Buyurtmalarni ekranga chiqarish
+// --- ADMIN PANEL FUNKSIYALARI (finishOrder'dan tashqarida bo'lishi shart) ---
 window.renderAdminOrders = function() {
     const adminList = document.getElementById('admin-orders-list');
     if (!adminList) return;
@@ -254,13 +277,12 @@ window.renderAdminOrders = function() {
     adminList.innerHTML = '';
 
     if (allOrders.length === 0) {
-        adminList.innerHTML = '<tr><td colspan="6" style="text-align:center;">Hozircha buyurtmalar yo\'q</td></tr>';
+        adminList.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px;">Buyurtmalar yo\'q</td></tr>';
         return;
     }
 
-    allOrders.reverse().forEach((order, index) => {
-        let itemsHtml = order.items.map(i => `${i.name} (${i.quantity} ta)`).join(', ');
-        
+    allOrders.slice().reverse().forEach((order, index) => {
+        let itemsHtml = order.items.map(i => `${i.name} (${i.quantity})`).join(', ');
         adminList.innerHTML += `
             <tr>
                 <td>${index + 1}</td>
@@ -268,29 +290,16 @@ window.renderAdminOrders = function() {
                 <td>${order.address}</td>
                 <td>${itemsHtml}</td>
                 <td>${order.total.toLocaleString()} so'm</td>
-                <td>
-                    <button onclick="deleteOrder(${order.id})" style="background:#e74c3c; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;">O'chirish</button>
-                </td>
-            </tr>
-        `;
+                <td><button onclick="deleteOrder(${order.id})" style="background:#e74c3c; color:white; border:none; padding:5px; border-radius:4px; cursor:pointer;">O'chirish</button></td>
+            </tr>`;
     });
 }
 
-// 2. Buyurtmani o'chirish
 window.deleteOrder = function(orderId) {
-    if (confirm("Ushbu buyurtmani o'chirishni xohlaysizmi?")) {
+    if (confirm("O'chirilsinmi?")) {
         let allOrders = JSON.parse(localStorage.getItem('oppa_orders')) || [];
         allOrders = allOrders.filter(o => o.id !== orderId);
         localStorage.setItem('oppa_orders', JSON.stringify(allOrders));
-        renderAdminOrders(); // Ro'yxatni yangilash
+        renderAdminOrders();
     }
 }
-
-// 3. Admin panelga kirganda avtomatik yuklash
-if (document.getElementById('admin-orders-list')) {
-    window.renderAdminOrders();
-}
-    
-}
-
-
