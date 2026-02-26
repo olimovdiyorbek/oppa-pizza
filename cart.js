@@ -100,6 +100,33 @@ window.setRating = function(productId, value) {
     alert("Baholaganingiz uchun rahmat! ⭐");
 }
 
+// GEOLOKATSIYA FUNKSIYASI
+window.getLocation = function() {
+    const status = document.getElementById('location-status');
+    const coordsInput = document.getElementById('user-coords');
+    
+    if (!navigator.geolocation) {
+        alert("Geolokatsiya brauzeringizda mavjud emas.");
+        return;
+    }
+
+    status.style.display = "block";
+    status.style.color = "#f39c12";
+    status.innerText = "⏳ Joylashuv aniqlanmoqda...";
+
+    navigator.geolocation.getCurrentPosition(
+        (pos) => {
+            coordsInput.value = `${pos.coords.latitude},${pos.coords.longitude}`;
+            status.style.color = "#27ae60";
+            status.innerText = "✅ Joylashuv muvaffaqiyatli saqlandi!";
+        },
+        (err) => {
+            status.style.color = "#e74c3c";
+            status.innerText = "❌ Joylashuvni olishga ruxsat berilmadi.";
+        }
+    );
+}
+
 // 4. SAVAT BILAN ISHLASH
 window.addToCart = function(productId) {
     const product = products.find(p => p.id === productId);
@@ -110,7 +137,6 @@ window.addToCart = function(productId) {
         cart.push({ ...product, quantity: 1 });
     }
     syncStorage();
-    // Agar savat ochiq bo'lsa, real vaqtda yangilash
     if (document.getElementById('cart-modal').style.display === "block") renderCart();
 }
 
@@ -143,20 +169,16 @@ function renderCart() {
         return;
     }
 
-    // --- REAL-TIME BONUS MANTIQI ---
     const phoneInput = document.getElementById('user-phone');
     const currentPhone = phoneInput ? phoneInput.value.trim() : (localStorage.getItem('last_customer_phone') || "");
     
-    // Bazadagi eski balans
     let oldBalance = currentPhone ? (parseInt(localStorage.getItem(`pizzas_balance_${currentPhone}`)) || 0) : 0;
-    // Savatdagi joriy katta pitsalar (ID: 1 va 4)
     const currentCartPizzas = cart
         .filter(item => item.id === 1 || item.id === 4)
         .reduce((sum, item) => sum + item.quantity, 0);
 
     let totalVisualBalance = oldBalance + currentCartPizzas;
     let progressDisplay = totalVisualBalance % 5;
-    // Agar aniq 5, 10... bo'lsa, to'la ko'rsatish
     if (totalVisualBalance > 0 && totalVisualBalance % 5 === 0) progressDisplay = 5;
     
     const progressPercent = (progressDisplay / 5) * 100;
@@ -194,7 +216,7 @@ window.changeQty = function(id, delta) {
         if (item.quantity <= 0) cart = cart.filter(p => p.id !== id);
     }
     syncStorage();
-    renderCart(); // Real vaqtda balans va narx yangilanadi
+    renderCart();
 }
 
 window.closeCart = function() {
@@ -208,6 +230,7 @@ window.finishOrder = async function() {
     const nameInput = document.getElementById('user-name');
     const phoneInput = document.getElementById('user-phone');
     const addressInput = document.getElementById('user-address');
+    const coordsInput = document.getElementById('user-coords');
 
     if (cart.length === 0) return alert("Savat bo'sh!");
     if (!nameInput.value || !phoneInput.value || !addressInput.value) {
@@ -217,7 +240,6 @@ window.finishOrder = async function() {
     const phone = phoneInput.value.trim();
     localStorage.setItem('last_customer_phone', phone);
 
-    // Balansni hisoblash va saqlash
     let currentBalance = parseInt(localStorage.getItem(`pizzas_balance_${phone}`)) || 0;
     const specialPizzasCount = cart.filter(i => i.id === 1 || i.id === 4).reduce((s, i) => s + i.quantity, 0);
     
@@ -229,13 +251,13 @@ window.finishOrder = async function() {
     }
     localStorage.setItem(`pizzas_balance_${phone}`, currentBalance);
 
-    // Buyurtmani arxivlash
     let allOrders = JSON.parse(localStorage.getItem('oppa_orders')) || [];
     const orderData = {
         id: Date.now(),
         customer: nameInput.value,
         phone: phone,
         address: addressInput.value,
+        coords: coordsInput.value,
         items: [...cart],
         total: cart.reduce((s, i) => s + (i.price * i.quantity), 0),
         date: new Date().toLocaleString()
@@ -243,14 +265,19 @@ window.finishOrder = async function() {
     allOrders.push(orderData);
     localStorage.setItem('oppa_orders', JSON.stringify(allOrders));
 
-    // Telegram xabari
     let orderNum = (parseInt(localStorage.getItem('oppa_order_total_count')) || 0) + 1;
     localStorage.setItem('oppa_order_total_count', orderNum);
 
     const payMethod = document.querySelector('input[name="pay"]:checked')?.value || "Naqd";
     let orderDetails = cart.map((item, i) => `${i + 1}. *${item.name}* — ${item.quantity} ta`).join('\n');
     
-    const message = `🚀 *YANGI BUYURTMA (№${orderNum})*\n━━━━━━━━━━━━━━\n👤 *Mijoz:* ${orderData.customer}\n📞 *Tel:* ${phone}\n📍 *Manzil:* ${orderData.address}\n💳 *To'lov:* ${payMethod === 'Cash' ? 'Naqd' : 'Karta'}\n━━━━━━━━━━━━━━\n📦 *Mahsulotlar:*\n${orderDetails}\n━━━━━━━━━━━━━━\n🍕 *Mijoz yangi balansi:* ${currentBalance}/5 ta\n💰 *JAMI:* ${orderData.total.toLocaleString()} so'm` + giftNote;
+    // Xaritaga havola tayyorlash
+    let mapLink = "";
+    if (orderData.coords) {
+        mapLink = `\n📍 *Xarita:* [Google Maps](https://www.google.com/maps?q=${orderData.coords})`;
+    }
+
+    const message = `🚀 *YANGI BUYURTMA (№${orderNum})*\n━━━━━━━━━━━━━━\n👤 *Mijoz:* ${orderData.customer}\n📞 *Tel:* ${phone}\n📍 *Manzil:* ${orderData.address}${mapLink}\n💳 *To'lov:* ${payMethod === 'Cash' ? 'Naqd' : 'Karta'}\n━━━━━━━━━━━━━━\n📦 *Mahsulotlar:*\n${orderDetails}\n━━━━━━━━━━━━━━\n🍕 *Mijoz yangi balansi:* ${currentBalance}/5 ta\n💰 *JAMI:* ${orderData.total.toLocaleString()} so'm` + giftNote;
 
     try {
         const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
@@ -263,11 +290,13 @@ window.finishOrder = async function() {
             cart = [];
             syncStorage();
             closeCart();
+            // Ma'lumotlarni tozalash
+            coordsInput.value = "";
+            document.getElementById('location-status').style.display = "none";
         }
     } catch (e) { alert("Xatolik!"); }
 }
 
-// --- ADMIN PANEL ---
 window.renderAdminOrders = function() {
     const adminList = document.getElementById('admin-orders-list');
     if (!adminList) return;
