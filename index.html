@@ -65,7 +65,13 @@
                     <h3>Ma'lumotlaringiz:</h3>
                     <input type="text" id="user-name" placeholder="Ismingiz">
                     <input type="tel" id="user-phone" placeholder="99-123-45-67" oninput="renderCart()">
-                    <textarea id="user-address" placeholder="Yetkazib berish manzili"></textarea>
+                    
+                    <div style="display: flex; gap: 5px; margin-bottom: 10px;">
+                        <textarea id="user-address" placeholder="Yetkazib berish manzili" style="flex: 1; margin-bottom: 0;"></textarea>
+                        <button type="button" onclick="getLocation()" style="background: #27ae60; color: white; border: none; padding: 0 15px; border-radius: 8px; cursor: pointer; font-size: 20px;" title="Joylashuvni yuborish">📍</button>
+                    </div>
+                    <input type="hidden" id="user-coords" value="">
+                    <p id="location-status" style="font-size: 11px; margin-top: -5px; margin-bottom: 10px; display: none; font-weight: bold;"></p>
                 </div>
 
                 <div class="total-section">
@@ -92,16 +98,12 @@
         </div>
     </div>
 
-<footer style="text-align: center; padding: 20px; margin-top: 20px; border-top: 1px solid #ddd;">
+    <footer style="text-align: center; padding: 20px; margin-top: 20px; border-top: 1px solid #ddd;">
         <a href="admin.html" style="color: #006747; text-decoration: none; font-weight: bold; font-size: 14px;">
             ⚙️ Boshqaruv paneliga o'tish
         </a>
     </footer>
     
-<script type="module" src="cart.js"></script>
+<script src="cart.js"></script>
 </body>
 </html>
-
-
-
-
