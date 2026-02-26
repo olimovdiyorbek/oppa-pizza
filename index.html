@@ -1,103 +1,137 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#006747">
-    <link rel="apple-touch-icon" href="assets/imgs/icon-192.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('sw.js');
-        });
-      }
-    </script>
-    <title>Oppa Pizza Mobile App</title>
-    <link rel="stylesheet" href="style.css">
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#006747">
+    <link rel="apple-touch-icon" href="assets/imgs/icon-192.png">
+
+    <title>Oppa Pizza Mobile App</title>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Service Worker -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js');
+            });
+        }
+    </script>
 </head>
+
 <body>
 
-    <div class="promo-banner">
-        <marquee behavior="scroll" direction="left">
-            🍕 AKSIYA: 5 ta katta pitsa olgan mijozga 0.5L Pepsi sovg'a! 🎁 | 🚚 30 daqiqada yetkazib beriladi!
-        </marquee>
-    </div>
+    <!-- Promo Banner -->
+    <div class="promo-banner">
+        <marquee behavior="scroll" direction="left">
+            🍕 AKSIYA: 5 ta katta pitsa olgan mijozga 0.5L Pepsi sovg'a! 🎁 | 🚚 30 daqiqada yetkazib beriladi!
+        </marquee>
+    </div>
 
-    <header class="app-header">
-        <div class="location">
-            <span>Yetkazib berish:</span>
-            <strong id="display-address">Manzilni kiriting...</strong>
-        </div>
-        <div class="cart-icon" onclick="openCart()">
-            <span class="badge">0</span>
-            <span class="cart-emoji">🛒</span>
-        </div>
-    </header>
+    <!-- Header -->
+    <header class="app-header">
+        <div class="location">
+            <span>Yetkazib berish:</span>
+            <strong id="display-address">Manzilni kiriting...</strong>
+        </div>
 
-    <div class="search-container">
-        <input type="text" id="product-search" placeholder="Pitsa yoki ichimlik qidirish..." onkeyup="searchProducts()">
-    </div>
+        <div class="cart-icon" onclick="openCart()">
+            <span class="badge">0</span>
+            <span class="cart-emoji">🛒</span>
+        </div>
+    </header>
 
-    <nav class="categories-wrapper">
-        <section class="categories">
-            <button class="cat-btn active" onclick="filterCategory('pizza', this)">Pitsalar</button>
-            <button class="cat-btn" onclick="filterCategory('food', this)">Taomlar</button>
-            <button class="cat-btn" onclick="filterCategory('dessert', this)">Desertlar</button>
-            <button class="cat-btn" onclick="filterCategory('drinks', this)">Ichimliklar</button>
-        </section>
-    </nav>
+    <!-- Search -->
+    <div class="search-container">
+        <input 
+            type="text" 
+            id="product-search" 
+            placeholder="Pitsa yoki ichimlik qidirish..."
+            onkeyup="searchProducts()"
+        >
+    </div>
 
-    <main class="product-grid" id="pizza-list"></main>
+    <!-- Categories -->
+    <nav class="categories-wrapper">
+        <section class="categories">
+            <button class="cat-btn active" onclick="filterCategory('pizza', this)">Pitsalar</button>
+            <button class="cat-btn" onclick="filterCategory('food', this)">Taomlar</button>
+            <button class="cat-btn" onclick="filterCategory('dessert', this)">Desertlar</button>
+            <button class="cat-btn" onclick="filterCategory('drinks', this)">Ichimliklar</button>
+        </section>
+    </nav>
 
-    <div id="cart-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <span class="close-modal" onclick="closeCart()">&times;</span>
-                <h2>Mening savatim</h2>
-            </div>
-            
-            <div id="cart-items-list" class="cart-body"></div>
+    <!-- Products -->
+    <main class="product-grid" id="pizza-list"></main>
 
-            <div class="cart-footer">
-                <div class="user-info-form">
-                    <h3>Ma'lumotlaringiz:</h3>
-                    <input type="text" id="user-name" placeholder="Ismingiz">
-                    <input type="tel" id="user-phone" placeholder="99-123-45-67" oninput="renderCart()">
-                    <textarea id="user-address" placeholder="Yetkazib berish manzili"></textarea>
-                </div>
+    <!-- Cart Modal -->
+    <div id="cart-modal" class="modal">
+        <div class="modal-content">
 
-                <div class="total-section">
-                    <span>Umumiy summa:</span>
-                    <strong id="cart-total-price">0 so'm</strong>
-                </div>
-                
-                <div class="payment-methods">
-                    <p>To'lov usulini tanlang:</p>
-                    <div class="pay-options">
-                        <label class="pay-card">
-                            <input type="radio" name="pay" value="Cash" checked>
-                            <div class="pay-design">Naqd 💵</div>
-                        </label>
-                        <label class="pay-card">
-                            <input type="radio" name="pay" value="Card">
-                            <div class="pay-design">Karta 💳</div>
-                        </label>
-                    </div>
-                </div>
-                
-                <button class="checkout-btn" onclick="finishOrder()">Buyurtmani rasmiylashtirish</button>
-            </div>
-        </div>
-    </div>
+            <div class="modal-header">
+                <span class="close-modal" onclick="closeCart()">×</span>
+                <h2>Mening savatim</h2>
+            </div>
 
-<footer style="text-align: center; padding: 20px; margin-top: 20px; border-top: 1px solid #ddd;">
-        <a href="admin.html" style="color: #006747; text-decoration: none; font-weight: bold; font-size: 14px;">
-            ⚙️ Boshqaruv paneliga o'tish
-        </a>
-    </footer>
-    
-<script type="module" src="cart.js"></script>
+            <!-- Cart Items -->
+            <div id="cart-items-list" class="cart-body"></div>
+
+            <!-- Cart Footer -->
+            <div class="cart-footer">
+
+                <!-- User Info -->
+                <div class="user-info-form">
+                    <h3>Ma'lumotlaringiz:</h3>
+
+                    <input type="text" id="user-name" placeholder="Ismingiz">
+                    <input type="tel" id="user-phone" placeholder="99-123-45-67" oninput="renderCart()">
+                    <textarea id="user-address" placeholder="Yetkazib berish manzili"></textarea>
+                </div>
+
+                <!-- Total -->
+                <div class="total-section">
+                    <span>Umumiy summa:</span>
+                    <strong id="cart-total-price">0 so'm</strong>
+                </div>
+
+                <!-- Payment -->
+                <div class="payment-methods">
+                    <p>To'lov usulini tanlang:</p>
+
+                    <div class="pay-options">
+                        <label class="pay-card">
+                            <input type="radio" name="pay" value="Cash" checked>
+                            <div class="pay-design">Naqd 💵</div>
+                        </label>
+
+                        <label class="pay-card">
+                            <input type="radio" name="pay" value="Card">
+                            <div class="pay-design">Karta 💳</div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Checkout Button -->
+                <button class="checkout-btn" onclick="finishOrder()">
+                    Buyurtmani rasmiylashtirish
+                </button>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <a href="admin.html">
+            ⚙️ Boshqaruv paneliga o'tish
+        </a>
+    </footer>
+
+    <!-- JS -->
+    <script type="module" src="cart.js"></script>
+
 </body>
 </html>
