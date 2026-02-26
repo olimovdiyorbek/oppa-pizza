@@ -46,6 +46,7 @@ window.onload = () => {
 
 // 3. QIDIRUV VA FILTRLASH
 window.filterCategory = function(cat, element) {
+    localStorage.setItem(pizzas_balance_${phone}, currentBalance);
     document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
     if (element) element.classList.add('active');
     const filtered = products.filter(p => p.category === cat);
@@ -230,7 +231,6 @@ Diyorbek, [2/26/2026 7:30 PM]
         giftNote = "\n\n🎁 *AKSIYA: MIJOZGA 0.5L PEPSI QO'SHIB BERING!* 🥤";
         currentBalance = currentBalance % 5;
     }
-    localStorage.setItem(pizzas_balance_${phone}, currentBalance);
 
     // Buyurtmani arxivlash
     let allOrders = JSON.parse(localStorage.getItem('oppa_orders'))  [];
