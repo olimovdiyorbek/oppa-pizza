@@ -99,6 +99,50 @@ window.setRating = function(productId, value) {
     alert("Baholaganingiz uchun rahmat! ⭐");
 }
 
+// --- LOKATSIYANI ANIQLASH (YAXSHILANGAN) ---
+window.getLocation = function() {
+    const status = document.getElementById('location-status');
+    const coordsInput = document.getElementById('user-coords');
+    const addrInput = document.getElementById('user-address');
+    const locBtn = document.getElementById('loc-btn');
+    
+    if (!navigator.geolocation) {
+        alert("Geolokatsiya brauzeringizda mavjud emas.");
+        return;
+    }
+
+    status.style.display = "block";
+    status.style.color = "#f39c12";
+    status.innerText = "⏳ Aniq joylashuv aniqlanmoqda...";
+    locBtn.style.opacity = "0.6";
+
+    const options = {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+    };
+
+    navigator.geolocation.getCurrentPosition(
+        (pos) => {
+            coordsInput.value = `${pos.coords.latitude},${pos.coords.longitude}`;
+            status.style.color = "#27ae60";
+            status.innerText = "✅ Joylashuv aniqlandi!";
+            locBtn.style.opacity = "1";
+            locBtn.style.background = "#2ecc71";
+            
+            if (addrInput.value.trim() === "") {
+                addrInput.value = "📍 Lokatsiya yuborildi";
+            }
+        },
+        (err) => {
+            status.style.color = "#e74c3c";
+            status.innerText = "❌ Joylashuvni aniqlab bo'lmadi. GPS-ni tekshiring.";
+            locBtn.style.opacity = "1";
+        },
+        options
+    );
+}
+
 window.addToCart = function(productId) {
     const product = products.find(p => p.id === productId);
     const existingItem = cart.find(item => item.id === productId);
@@ -194,19 +238,28 @@ window.closeCart = function() {
     document.getElementById('cart-modal').style.display = "none";
 }
 
+// --- BUYURTMANI YAKUNLASH ---
 window.finishOrder = async function() {
     const BOT_TOKEN = "8539044860:AAF_MNwdQrHUjLsu_aIYnjk8kBmX40-X9aM";
     const CHAT_ID = "6231029845";
     const nameInput = document.getElementById('user-name');
     const phoneInput = document.getElementById('user-phone');
     const addressInput = document.getElementById('user-address');
+    const coordsInput = document.getElementById('user-coords');
+
+    const name = nameInput.value.trim();
+    const phone = phoneInput.value.trim();
+    const address = addressInput.value.trim();
+    const coords = coordsInput.value;
 
     if (cart.length === 0) return alert("Savat bo'sh!");
-    if (!nameInput.value || !phoneInput.value || !addressInput.value) {
-        return alert("Iltimos, ma'lumotlarni to'ldiring!");
+    if (!name || !phone) return alert("Iltimos, ismingiz va telefoningizni kiriting!");
+    
+    // Yo manzil, yo lokatsiya bo'lishi shart
+    if (!address && !coords) {
+        return alert("Iltimos, manzilni yozing yoki lokatsiya tugmasini bosing!");
     }
 
-    const phone = phoneInput.value.trim();
     localStorage.setItem('last_customer_phone', phone);
 
     let currentBalance = parseInt(localStorage.getItem(`pizzas_balance_${phone}`)) || 0;
@@ -223,9 +276,10 @@ window.finishOrder = async function() {
     let allOrders = JSON.parse(localStorage.getItem('oppa_orders')) || [];
     const orderData = {
         id: Date.now(),
-        customer: nameInput.value,
+        customer: name,
         phone: phone,
-        address: addressInput.value,
+        address: address || "Faqat lokatsiya yuborilgan",
+        coords: coords,
         items: [...cart],
         total: cart.reduce((s, i) => s + (i.price * i.quantity), 0),
         date: new Date().toLocaleString()
@@ -239,7 +293,9 @@ window.finishOrder = async function() {
     const payMethod = document.querySelector('input[name="pay"]:checked')?.value || "Naqd";
     let orderDetails = cart.map((item, i) => `${i + 1}. *${item.name}* — ${item.quantity} ta`).join('\n');
     
-    const message = `🚀 *YANGI BUYURTMA (№${orderNum})*\n━━━━━━━━━━━━━━\n👤 *Mijoz:* ${orderData.customer}\n📞 *Tel:* ${phone}\n📍 *Manzil:* ${orderData.address}\n💳 *To'lov:* ${payMethod === 'Cash' ? 'Naqd' : 'Karta'}\n━━━━━━━━━━━━━━\n📦 *Mahsulotlar:*\n${orderDetails}\n━━━━━━━━━━━━━━\n🍕 *Mijoz yangi balansi:* ${currentBalance}/5 ta\n💰 *JAMI:* ${orderData.total.toLocaleString()} so'm` + giftNote;
+    let mapLink = coords ? `\n📍 *Xarita:* https://www.google.com/maps?q=${coords}` : "";
+
+    const message = `🚀 *YANGI BUYURTMA (№${orderNum})*\n━━━━━━━━━━━━━━\n👤 *Mijoz:* ${name}\n📞 *Tel:* ${phone}\n📍 *Manzil:* ${orderData.address}${mapLink}\n💳 *To'lov:* ${payMethod === 'Cash' ? 'Naqd' : 'Karta'}\n━━━━━━━━━━━━━━\n📦 *Mahsulotlar:*\n${orderDetails}\n━━━━━━━━━━━━━━\n🍕 *Mijoz balansi:* ${currentBalance}/5 ta\n💰 *JAMI:* ${orderData.total.toLocaleString()} so'm` + giftNote;
 
     try {
         const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
@@ -252,6 +308,9 @@ window.finishOrder = async function() {
             cart = [];
             syncStorage();
             closeCart();
+            coordsInput.value = "";
+            addressInput.value = "";
+            document.getElementById('location-status').style.display = "none";
         }
     } catch (e) { alert("Xatolik!"); }
 }
