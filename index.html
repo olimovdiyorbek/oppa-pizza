@@ -54,7 +54,7 @@
     <div id="cart-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <span class="close-modal" onclick="closeCart()">&times;</span>
+                <span class="close-modal" onclick="closeCart()">×</span>
                 <h2>Mening savatim</h2>
             </div>
             
@@ -65,7 +65,13 @@
                     <h3>Ma'lumotlaringiz:</h3>
                     <input type="text" id="user-name" placeholder="Ismingiz">
                     <input type="tel" id="user-phone" placeholder="99-123-45-67" oninput="renderCart()">
-                    <textarea id="user-address" placeholder="Yetkazib berish manzili"></textarea>
+                    
+                    <div style="display: flex; gap: 5px; margin-bottom: 5px;">
+                        <textarea id="user-address" placeholder="Manzilni yozing yoki lokatsiya tugmasini bosing" style="flex: 1; margin-bottom: 0; min-height: 50px;"></textarea>
+                        <button type="button" id="loc-btn" onclick="getLocation()" style="background: #27ae60; color: white; border: none; padding: 0 15px; border-radius: 8px; cursor: pointer; font-size: 20px; transition: 0.3s;" title="Joylashuvni yuborish">📍</button>
+                    </div>
+                    <input type="hidden" id="user-coords" value="">
+                    <p id="location-status" style="font-size: 11px; margin-bottom: 10px; display: none; font-weight: bold;"></p>
                 </div>
 
                 <div class="total-section">
@@ -97,7 +103,32 @@
             ⚙️ Boshqaruv paneliga o'tish
         </a>
     </footer>
+
+<div id="auth-screen" class="auth-container">
+    <div class="auth-card">
+        <div class="logo-circle">OP</div>
+        <h2>Xush kelibsiz!</h2>
+        <p>Buyurtma berish uchun tizimga kiring</p>
+        
+        <div id="login-step-1">
+            <input type="text" id="auth-name" placeholder="Ismingiz">
+            <input type="tel" id="auth-phone" placeholder="+998 90 123 45 67">
+            <div id="recaptcha-container"></div> <button class="auth-btn" onclick="sendSMSCode()">Kod yuborish</button>
+        </div>
+
+        <div id="login-step-2" style="display: none;">
+            <p id="sent-number-text"></p>
+            <input type="number" id="auth-code" placeholder="SMS kodni kiriting">
+            <button class="auth-btn verify-btn" onclick="verifyCode()">Tasdiqlash</button>
+            <button class="back-link" onclick="location.reload()">Raqamni o'zgartirish</button>
+        </div>
+    </div>
+</div>
+
+<div id="main-app" style="display: none;">
+    </div>
+
     
-<script type="module" src="cart.js"></script>
+<script src="cart.js"></script>
 </body>
 </html>
