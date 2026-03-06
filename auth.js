@@ -1,10 +1,8 @@
+// 1. Import qismlarini CDN linklari bilan yangilang
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
+// Firebase konfiguratsiyasi
 const firebaseConfig = {
   apiKey: "AIzaSyCRkhvyKav1O40Y1mxNHwze9cen7Iexb5k",
   authDomain: "oppa-pizza-42a19.firebaseapp.com",
@@ -14,10 +12,8 @@ const firebaseConfig = {
   appId: "1:127790906548:web:d5cb5eee9d8d1efe53ebe1"
 };
 
-// Initialize Firebase
+// Firebase ni ishga tushirish
 const app = initializeApp(firebaseConfig);
-
-
 const auth = getAuth(app);
 auth.languageCode = 'uz'; // SMS tilini o'zbekcha qilish
 
@@ -37,11 +33,18 @@ window.sendSMSCode = async function() {
     const phone = document.getElementById("auth-phone").value.trim().replace(/\s/g, "");
 
     if (!name || phone.length < 12) {
-        alert("Ism va telefon raqamni to'liq kiriting!");
+        alert("Ism va telefon raqamni to'liq kiriting (masalan: +998901234567)!");
         return;
     }
 
     try {
+        // reCAPTCHA container mavjudligini tekshirish
+        const recaptchaContainer = document.getElementById('recaptcha-container');
+        if (!recaptchaContainer) {
+            console.error("recaptcha-container topilmadi!");
+            return;
+        }
+
         window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
             'size': 'invisible'
         });
@@ -64,6 +67,11 @@ window.verifyCode = async function() {
     const code = document.getElementById("auth-code").value;
     const name = document.getElementById("auth-name").value;
 
+    if (!confirmationResult) {
+        alert("Avval SMS kodini yuboring!");
+        return;
+    }
+
     try {
         const result = await confirmationResult.confirm(code);
         const user = result.user;
@@ -84,11 +92,16 @@ window.verifyCode = async function() {
 };
 
 function showMenu() {
-    document.getElementById("auth-screen").style.display = "none";
-    document.getElementById("main-app").style.display = "block";
+    const authScreen = document.getElementById("auth-screen");
+    const mainApp = document.getElementById("main-app");
     
-    // Savat kodingizdagi ism va telni avto-to'ldirish
-    const user = JSON.parse(localStorage.getItem("oppa_user"));
-    if(document.getElementById('user-name')) document.getElementById('user-name').value = user.name;
-    if(document.getElementById('user-phone')) document.getElementById('user-phone').value = user.phone;
+    if (authScreen) authScreen.style.display = "none";
+    if (mainApp) mainApp.style.display = "block";
+    
+    const savedData = localStorage.getItem("oppa_user");
+    if(savedData) {
+        const user = JSON.parse(savedData);
+        if(document.getElementById('user-name')) document.getElementById('user-name').value = user.name;
+        if(document.getElementById('user-phone')) document.getElementById('user-phone').value = user.phone;
+    }
 }
