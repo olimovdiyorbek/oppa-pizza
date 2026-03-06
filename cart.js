@@ -333,3 +333,16 @@ window.deleteOrder = function(id) {
         renderAdminOrders();
     }
 }
+
+import { db } from "./firebase.js";
+import { collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+async function saveOrder(order) {
+  try {
+    await addDoc(collection(db, "orders"), order);
+    alert("Buyurtma yuborildi!");
+  } catch (e) {
+    console.error("Xato:", e);
+  }
+}
+
