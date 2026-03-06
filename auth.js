@@ -1,16 +1,23 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyCRkhvyKav1040Y1mxNHwze9cen7Iexb5k",
-    authDomain: "oppa-pizza-42a19.firebaseapp.com",
-    projectId: "oppa-pizza-42a19",
-    storageBucket: "oppa-pizza-42a19.firebasestorage.app",
-    messagingSenderId: "331899141018",
-    appId: "1:331899141018:web:740411706691763750f0c0"
+  apiKey: "AIzaSyCRkhvyKav1O40Y1mxNHwze9cen7Iexb5k",
+  authDomain: "oppa-pizza-42a19.firebaseapp.com",
+  projectId: "oppa-pizza-42a19",
+  storageBucket: "oppa-pizza-42a19.firebasestorage.app",
+  messagingSenderId: "127790906548",
+  appId: "1:127790906548:web:d5cb5eee9d8d1efe53ebe1"
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
+
+
 const auth = getAuth(app);
 auth.languageCode = 'uz'; // SMS tilini o'zbekcha qilish
 
