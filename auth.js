@@ -32,31 +32,21 @@ window.sendSMSCode = async function() {
     const nameInput = document.getElementById("auth-name");
     const phoneInput = document.getElementById("auth-phone");
 
-    if (!nameInput || !phoneInput) return;
-
     const name = nameInput.value.trim();
     const phone = phoneInput.value.trim().replace(/\s/g, "");
 
     if (!name || phone.length < 12) {
-        alert("Ism va telefon raqamni to'liq kiriting (masalan: +998901234567)!");
+        alert("Ism va telefon raqamni to'liq kiriting!");
         return;
     }
 
     try {
-        const recaptchaContainer = document.getElementById('recaptcha-container');
-        if (!recaptchaContainer) {
-            alert("Xatolik: recaptcha-container topilmadi!");
-            return;
+        // MUHIM: Agar recaptchaVerifier allaqachon bo'lsa, uni qayta yaratmaslik kerak
+        if (!window.recaptchaVerifier) {
+            window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+                'size': 'invisible'
+            });
         }
-
-        // Eski verifier bo'lsa tozalash
-        if (window.recaptchaVerifier) {
-            window.recaptchaVerifier.clear();
-        }
-
-        window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-            'size': 'invisible'
-        });
 
         const result = await signInWithPhoneNumber(auth, phone, window.recaptchaVerifier);
         confirmationResult = result;
@@ -65,9 +55,13 @@ window.sendSMSCode = async function() {
         document.getElementById("login-step-2").style.display = "block";
         document.getElementById("sent-number-text").innerText = `${phone} raqamiga kod yuborildi`;
     } catch (error) {
-        // auth/operation-not-allowed xatosi chiqsa, Test raqamidan foydalanishni eslatamiz
-        alert("Xatolik: " + error.message);
         console.error(error);
+        // Agar reCAPTCHA xatosi chiqsa, obyektni tozalab yuboramiz
+        if (window.recaptchaVerifier) {
+            window.recaptchaVerifier.clear();
+            window.recaptchaVerifier = null;
+        }
+        alert("Xatolik: " + error.message);
     }
 };
 
