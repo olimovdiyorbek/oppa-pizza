@@ -104,36 +104,11 @@
         </a>
     </footer>
 
-<div id="auth-screen" class="auth-container">
-    <div class="auth-card">
-        <div class="logo-circle">OP</div>
-        <h2>Xush kelibsiz!</h2>
-        <p>Buyurtma berish uchun tizimga kiring</p>
-        
-        <div id="login-step-1">
-            <input type="text" id="auth-name" placeholder="Ismingiz">
-            <input type="tel" id="auth-phone" placeholder="+998 90 123 45 67">
-            <div id="recaptcha-container"></div> <button class="auth-btn" onclick="sendSMSCode()">Kod yuborish</button>
-        </div>
 
-        <div id="login-step-2" style="display: none;">
-            <p id="sent-number-text"></p>
-            <input type="number" id="auth-code" placeholder="SMS kodni kiriting">
-            <button class="auth-btn verify-btn" onclick="verifyCode()">Tasdiqlash</button>
-            <button class="back-link" onclick="location.reload()">Raqamni o'zgartirish</button>
-        </div>
-    </div>
-</div>
-
-<div id="recaptcha-container"></div>
-    
-<div id="main-app" style="display: none;">
-    </div>
-    
-    <script type="module" src="auth.js"></script>
 <script src="cart.js"></script>
 </body>
 </html>
+
 
 
 
